@@ -1,0 +1,4 @@
+*.before*.html
+*.backup.html
+.DS_Store
+Thumbs.db

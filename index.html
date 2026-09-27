@@ -1,0 +1,1397 @@
+<meta charset="utf-8">
+<title>ZERO TRUST</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0d1017;
+  --panel:#141924;
+  --panel2:#1a2130;
+  --line:#28304a;
+  --ink:#dde3ef;
+  --mute:#8791a8;
+  --dim:#5a6480;
+  --accent:#a592ff;
+  --accent-ink:#0d1017;
+  --ca:#4fa6ff;
+  --cb:#f3a53c;
+  --ck:#ff5d7c;
+  --cw:#eef1f7;
+  --ok:#5ad6a0;
+  --warn:#ffc862;
+  --bad:#ff6b6b;
+  --f-disp:"Chakra Petch","IBM Plex Sans JP",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans JP","Hiragino Sans","Yu Gothic UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--f-body);font-size:14px;line-height:1.55;margin:0;padding-inline:16px;padding-block:12px 40px}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-disp);margin:0;text-wrap:balance;letter-spacing:.02em}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.lbl{font-family:var(--f-disp);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:6px;padding:10px 16px;font-family:var(--f-disp);font-weight:700;letter-spacing:.06em}
+.btn:disabled{background:var(--line);color:var(--dim);cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+select,input[type=text]{background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:5px 8px;min-width:0}
+.badge{display:inline-block;font-family:var(--f-disp);font-size:11px;font-weight:700;letter-spacing:.08em;padding:1px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.ra{color:var(--ca)}.rb{color:var(--cb)}.rk{color:var(--ck)}.rw{color:var(--cw)}
+
+/* ---------- setup ---------- */
+.setup{max-width:880px;margin:0 auto;padding-top:20px;display:grid;gap:28px}
+.logo{font-family:var(--f-mono);font-weight:800;font-size:clamp(40px,9vw,84px);line-height:.95;letter-spacing:-.02em}
+.logo span{color:var(--accent)}
+.tagline{color:var(--mute);max-width:60ch;margin-top:10px}
+.pwdemo{display:flex;gap:8px;margin-top:18px}
+.pwdemo b{font-family:var(--f-mono);font-size:28px;width:46px;height:58px;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.pwdemo b.c{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.counts{display:flex;flex-wrap:wrap;gap:8px}
+.counts button{width:52px;height:52px;border-radius:6px;border:1px solid var(--line);background:var(--panel);font-family:var(--f-mono);font-size:20px;font-weight:600}
+.counts button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.comp{border-collapse:collapse;font-family:var(--f-mono);font-size:13px;width:100%;max-width:520px}
+.comp th,.comp td{border-bottom:1px solid var(--line);padding:5px 10px;text-align:center}
+.comp tr.on td{background:var(--panel2);color:var(--ink)}
+.comp td{color:var(--mute)}
+.online{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 18px;display:grid;gap:10px}
+.online .room{font-family:var(--f-disp);font-size:13px;letter-spacing:.1em;color:var(--mute)}
+.online .room b{font-family:var(--f-mono);font-size:30px;color:var(--ink);letter-spacing:.12em;margin-left:8px}
+.online .urlbox{width:100%}
+.online p{margin:0}
+.wait{color:var(--warn)}
+.rules{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 18px}
+.rules summary{cursor:pointer;font-family:var(--f-disp);font-weight:600}
+.rules li{margin:4px 0}
+.rules p,.rules ul{max-width:70ch}
+
+/* ---------- header ---------- */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:14px}
+.top .brand{font-family:var(--f-mono);font-weight:800;font-size:20px}
+.top .brand span{color:var(--accent)}
+.round{font-family:var(--f-mono);font-size:13px}
+.round b{font-size:18px}
+.steps{display:flex;flex-wrap:wrap;gap:4px;font-family:var(--f-disp);font-size:11px;letter-spacing:.1em}
+.steps span{padding:3px 8px;border-radius:3px;color:var(--dim);border:1px solid var(--line)}
+.steps span.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.steps span.done{color:var(--mute)}
+
+/* ---------- layout ---------- */
+.layout{display:grid;gap:14px;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,.95fr);grid-template-areas:"console board logs";align-items:start}
+.console{grid-area:console}.board{grid-area:board}.logs{grid-area:logs}
+@media (max-width:1180px){.layout{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-areas:"console board" "logs logs"}}
+@media (max-width:760px){.layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"console" "board" "logs"}}
+.pane{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px}
+.pane+.pane{margin-top:14px}
+.pane h2{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+
+/* ---------- self ---------- */
+.me{display:grid;gap:10px}
+.me .row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.me .who{font-family:var(--f-mono);font-weight:800;font-size:18px}
+.mypw{display:flex;gap:6px}
+.mypw b{font-family:var(--f-mono);font-size:26px;width:42px;height:52px;display:grid;place-items:center;border-radius:6px;background:var(--panel2);border:1px solid var(--line)}
+.goal{color:var(--mute);font-size:13px;max-width:60ch}
+.cofrag{font-family:var(--f-mono);font-size:13px}
+
+/* ---------- hands / cards ---------- */
+.hand{display:grid;gap:8px;margin-bottom:12px}
+.hand .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+@media (max-width:460px){.hand .cards{grid-template-columns:minmax(0,1fr)}}
+.card{position:relative;text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:9px 10px 10px;display:grid;gap:3px;align-content:start}
+.card .cid{font-family:var(--f-mono);font-size:10px;color:var(--dim)}
+.card .cn{font-family:var(--f-disp);font-weight:700;font-size:13.5px;line-height:1.2}
+.card .cd{font-size:11.5px;color:var(--mute);line-height:1.4}
+.card.atk{border-top:3px solid var(--bad)}
+.card.def{border-top:3px solid var(--ok)}
+.card.fix{border-top:3px solid var(--accent)}
+.card[aria-pressed=true]{background:#262040;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.card:disabled{opacity:.4;cursor:not-allowed}
+.card.mull{opacity:.45;text-decoration:line-through}
+.card .tagm{position:absolute;right:8px;top:7px;font-family:var(--f-disp);font-size:10px;letter-spacing:.1em;color:var(--warn)}
+.slots{display:grid;gap:10px;margin:14px 0}
+.slot{border:1px dashed var(--line);border-radius:7px;padding:10px 12px;display:grid;gap:8px}
+.slot.filled{border-style:solid;border-color:#3a3363;background:#171428}
+.slot .sh{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.slot .sn{font-family:var(--f-disp);font-weight:700}
+.fields{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.fields label{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--mute)}
+.hint{font-family:var(--f-mono);font-size:11.5px;color:var(--warn)}
+.err{color:var(--bad);font-size:12px}
+.note{color:var(--mute);font-size:12.5px}
+.chk{display:inline-flex;gap:4px;align-items:center;font-family:var(--f-mono);font-size:13px;padding:3px 8px;border:1px solid var(--line);border-radius:4px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* ---------- board ---------- */
+.plist{display:grid;gap:8px}
+.pc{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:9px 11px;display:grid;gap:7px}
+.pc.dead{opacity:.55;background:transparent;border-style:dashed}
+.pc .ph{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pc .pn{font-family:var(--f-mono);font-weight:800;font-size:15px}
+.pc .lv{font-family:var(--f-mono);font-size:11px;padding:1px 6px;border-radius:3px;background:var(--bg);color:var(--mute)}
+.pc .lv.l2{color:var(--warn)}.pc .lv.l3{color:var(--accent)}.pc .lv.l4{color:var(--ck)}
+.digits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.dg{min-height:42px;border-radius:5px;border:1px solid var(--line);background:var(--bg);display:grid;place-items:center;text-align:center;padding:2px}
+.dg.c{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-family:var(--f-mono);font-weight:800;font-size:20px}
+.dg .cand{font-family:var(--f-mono);font-size:11px;line-height:1.25;color:var(--ink);word-break:break-all}
+.dg .q{font-family:var(--f-mono);color:var(--dim);font-size:16px}
+.dg .n{font-size:9.5px;color:var(--dim);display:block}
+.pc .meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11.5px;color:var(--mute)}
+.pc .conflict{color:var(--warn)}
+.pc details summary{cursor:pointer;font-size:12px;color:var(--mute)}
+.pc.pickable{cursor:pointer;transition:border-color .12s,background .12s}
+.pc.pickable:hover{border-color:var(--accent);background:#1e1a33}
+.pc.chosen{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset;background:#1e1a33}
+.selmark{font-family:var(--f-disp);font-size:10px;font-weight:700;letter-spacing:.1em;padding:1px 6px;border-radius:3px;background:var(--accent);color:var(--accent-ink)}
+.pftip{margin:0 0 10px;font-size:12px;color:var(--accent)}
+.dg{position:relative}
+.dpick{cursor:pointer;transition:border-color .12s,background .12s}
+.dg.dpick:hover{border-color:var(--accent);background:#221d3a}
+.dg.c.dpick:hover{background:var(--accent)}
+.mypw b.dpick:hover{border-color:var(--accent)}
+.dsel{outline:2px solid var(--accent);outline-offset:1px}
+.dsel[data-mark]::after{content:attr(data-mark);position:absolute;top:-8px;right:-4px;font-family:var(--f-disp);font-size:9px;font-weight:700;line-height:1;padding:2px 4px;border-radius:3px;background:var(--accent);color:var(--accent-ink);white-space:nowrap}
+.mypw b{position:relative}
+.slot.filled{cursor:pointer}
+.slot.active{border-color:var(--accent)}
+.hkrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.hk{display:grid;gap:3px;align-content:start;padding:6px;border:1px solid var(--line);border-radius:5px;background:var(--bg)}
+.hk select{width:100%;font-family:var(--f-mono);font-size:16px;text-align:center}
+.hk.on{border-color:var(--warn)}
+.hk.ok b{font-size:18px;color:var(--accent)}
+.hk .hint{font-size:10.5px;word-break:break-all}
+select.pfon{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.pc details ul{margin:6px 0 0;padding-left:16px;font-size:12px;font-family:var(--f-mono)}
+.pc details li{margin:2px 0}
+.stale{color:var(--dim)}
+
+/* ---------- logs ---------- */
+.tabs{display:flex;gap:4px;margin-bottom:10px}
+.tabs button{flex:1;background:transparent;border:1px solid var(--line);border-radius:5px;padding:6px;font-family:var(--f-disp);font-size:12px;letter-spacing:.1em;color:var(--mute)}
+.tabs button[aria-selected=true]{background:var(--panel2);color:var(--ink);border-color:var(--accent)}
+.feed{max-height:560px;overflow-y:auto;font-family:var(--f-mono);font-size:12px;display:grid;gap:3px;padding-right:4px}
+.feed .rh{font-family:var(--f-disp);letter-spacing:.14em;font-size:11px;color:var(--dim);margin-top:8px;border-bottom:1px solid var(--line);padding-bottom:2px}
+.feed div{word-break:break-word}
+.e-conf{color:var(--accent)}.e-fact{color:var(--ink)}.e-warn{color:var(--warn)}.e-share{color:var(--ok)}.e-mon{color:#9fc3ff}.e-sys{color:var(--mute)}.e-crack{color:var(--ck);font-weight:600}
+.chat{display:grid;gap:6px;font-size:13px}
+.chat .m{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:baseline}
+.chat .m b{font-family:var(--f-mono);font-size:12px;color:var(--mute)}
+.chat .m.me b{color:var(--accent)}
+.chatin{display:flex;gap:6px;margin-top:10px}
+.chatin input{flex:1}
+.chatbig .feed{max-height:380px}
+
+/* ---------- results / over ---------- */
+.res{display:grid;gap:4px;font-family:var(--f-mono);font-size:12.5px}
+.banner{border-radius:8px;padding:16px;border:1px solid var(--accent);background:#1c1833;display:grid;gap:6px}
+.banner h2{font-size:22px}
+.reveal{width:100%;border-collapse:collapse;font-size:13px}
+.reveal th,.reveal td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+.reveal td.mono{font-size:15px}
+.tblwrap{overflow-x:auto}
+@media (prefers-reduced-motion:no-preference){
+  .flash{animation:fl .6s ease-out}
+  @keyframes fl{from{background:#2d2656}to{background:transparent}}
+}
+</style>
+
+<div id="app"></div>
+
+<script>
+'use strict';
+/* ======================= 基本データ ======================= */
+const rnd=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rnd(a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const cnt=a=>a.filter(Boolean).length;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LET='ABCDEFGHIJ';
+const POSN=['第1桁','第2桁','第3桁','第4桁'];
+const MAX_ROUNDS=12;
+const ALL=[];for(let i=0;i<10000;i++)ALL.push([Math.floor(i/1000),Math.floor(i/100)%10,Math.floor(i/10)%10,i%10]);
+const COMP={4:[2,2,0,0],5:[2,2,1,0],6:[2,2,1,1],7:[3,3,1,0],8:[3,3,2,0],9:[3,3,2,1],10:[4,4,2,0]};
+const ROLE={
+  A:{name:'A社エージェント',tag:'A社',cls:'ra'},
+  B:{name:'B社エージェント',tag:'B社',cls:'rb'},
+  BLACK:{name:'ブラックハッカー',tag:'BLACK',cls:'rk'},
+  WHITE:{name:'ホワイトハッカー',tag:'WHITE',cls:'rw'}
+};
+const AC={
+  A01:{name:'Parity Scan',desc:'プレイヤー＋1桁を指定し、奇数/偶数を取得',f:['player','pos'],w:3},
+  A02:{name:'Random Parity Scan',desc:'未取得の「プレイヤー×桁」からランダム2箇所の奇数/偶数を取得',f:[],w:2},
+  A03:{name:'Range Scan',desc:'プレイヤー＋1桁を指定し、0〜4 / 5〜9 を取得',f:['player','pos'],w:3},
+  A04:{name:'Random Range Scan',desc:'未取得箇所からランダム2箇所の 0〜4 / 5〜9 を取得',f:[],w:2},
+  A05:{name:'Digit Search',desc:'プレイヤー＋数字を指定し、その数字がPWに何個あるか取得',f:['player','digit'],w:2},
+  A07:{name:'Checksum',desc:'プレイヤーを指定し、PW4桁の合計値を取得',f:['player'],w:2},
+  A08:{name:'Random Checksum',desc:'ランダム2人について、合計が18以下 / 19以上かを取得',f:[],w:1},
+  A09:{name:'Compare',desc:'1人の2桁を指定し、大小/同値を取得',f:['player','pos','pos2'],w:2},
+  A10:{name:'Cross Compare',desc:'異なる2人から1桁ずつ指定し、大小/同値を取得',f:['player','pos','player2','pos2'],w:1},
+  A11:{name:'Duplicate Scan',desc:'指定したPWに重複する数字があるか取得',f:['player'],w:1},
+  A13:{name:'Position Search',desc:'桁＋数字を指定し、条件に一致するプレイヤー人数を取得',f:['pos','digit'],w:1}
+};
+const DC={
+  D03:{name:'Attack Detector',desc:'今ラウンド自分をATTACKしたプレイヤーを特定',f:[],w:2},
+  D06:{name:'Password Reset',desc:'任意の1桁をランダムな別の数字へ変更',f:['pos'],w:3},
+  D10:{name:'Swap',desc:'PWの任意の2桁を交換',f:['pos','pos2'],w:1},
+  D18:{name:'Information Lock',desc:'今ラウンド、自分へのMONITORを遮断',f:[],w:1},
+  D19:{name:'Stealth Mode',desc:'今ラウンド、ランダムに対象を選ぶATTACK（Random Parity Scan / Random Range Scan / Random Checksum）の抽選から外れる',f:[],w:2},
+  D20:{name:'Mirror Guard',desc:'相手を1人指定。その相手からのATTACKを防ぎ、相手が指定していた桁と同じ桁の、相手のPWの数字を取得（桁指定のないATTACKならランダム1桁）',f:['player'],w:1},
+  D21:{name:'Log Eraser',desc:'今ラウンド、自分のHACKが失敗しても相手に通知されない',f:[],w:2},
+  D22:{name:'Access Log',desc:'今ラウンド、自分をATTACKまたはHACKの対象にしたプレイヤー全員を確認',f:[],w:1}
+};
+const FX={
+  HACK:{name:'HACK',desc:'4桁それぞれに 0〜9 か *（スキップ）を入力。正解の桁はCONFIRMED。1桁でも外すと相手に正体がバレる。'},
+  SHARE:{name:'SHARE',desc:'同時に使うもう一方のアクションの結果を、選んだ相手とシステム保証付きで共有。'}
+};
+const bag=defs=>{const b=[];for(const k in defs)for(let i=0;i<defs[k].w;i++)b.push(k);return b};
+const BAG_A=bag(AC),BAG_D=bag(DC);
+const randPw=()=>[rnd(10),rnd(10),rnd(10),rnd(10)];
+const diffDigit=d=>{let x;do x=rnd(10);while(x===d);return x};
+
+let S={phase:'setup',n:6};
+const P=i=>S.players[i];
+const L=p=>'PLAYER '+p.letter;
+let ME=-1;
+const human=()=>S.players&&S.players.find(p=>p.id===ME);
+const lvl=(v,t)=>cnt(v.conf[t.id]);
+
+/* ======================= ゲーム生成 ======================= */
+function newGame(n,allBots,nh=1){
+  const [na,nb,nk,nw]=COMP[n];
+  const roles=shuffle([...Array(na).fill('A'),...Array(nb).fill('B'),...Array(nk).fill('BLACK'),...Array(nw).fill('WHITE')]);
+  const seats=allBots?[]:shuffle([...Array(n).keys()]).slice(0,Math.min(nh,n));
+  ME=seats.length?seats[0]:-1;
+  S={n,round:1,max:8+n,phase:'action',epoch:0,players:[],co:{A:{pw:randPw(),cracked:false},B:{pw:randPw(),cracked:false}},sys:[],chat:[],winner:null,
+    gid:Math.random().toString(36).slice(2),acts:{},ready:{},mulls:{}};
+  for(let i=0;i<n;i++){
+    S.players.push({id:i,letter:LET[i],role:roles[i],human:seats.includes(i),pw:randPw(),alive:true,
+      handA:[],handD:[],facts:[],fv:0,feed:[],conf:{},lvSeen:{},roleKnown:{},
+      coConf:{A:{},B:{}},history:[],act:null,rr:null,fx:{},atk:[],hk:[]});
+  }
+  S.players.forEach(p=>{S.players.forEach(t=>{if(t!==p)p.conf[t.id]=[false,false,false,false]});refill(p)});
+  S.sys.push({round:1,text:`${n}人のハッカーが接続しました。A〜Jの割り当てはランダムです。`,cls:'sys'});
+  UI.sel={ATTACK:null,DEFENSE:null,FIXED:null};UI.mull=new Set();UI.msg='';UI.open=new Set();
+  return seats;
+}
+const HAND_SIZE=5;
+function refill(p){while(p.handA.length<HAND_SIZE)p.handA.push(pick(BAG_A));while(p.handD.length<HAND_SIZE)p.handD.push(pick(BAG_D))}
+
+/* ======================= 情報（ファクト） ======================= */
+function predOf(f){
+  switch(f.kind){
+    case'parity':return pw=>(pw[f.pos]%2===0)===(f.v==='EVEN');
+    case'range':return pw=>(pw[f.pos]<=4)===(f.v==='LOW');
+    case'count':return pw=>pw.filter(d=>d===f.digit).length===f.n;
+    case'sum':return pw=>pw[0]+pw[1]+pw[2]+pw[3]===f.n;
+    case'band':return pw=>(pw[0]+pw[1]+pw[2]+pw[3]>=19)===f.high;
+    case'cmp':return pw=>cmpSym(pw[f.p1],pw[f.p2])===f.r;
+    case'dup':return pw=>(new Set(pw).size<4)===f.has;
+    case'uniq':return pw=>new Set(pw).size===f.n;
+    case'miss':return pw=>pw[f.pos]!==f.d;
+    case'eq':return pw=>pw[f.pos]===f.d;
+  }
+  return null;
+}
+const cmpSym=(a,b)=>a<b?'<':a>b?'>':'=';
+function mk(f){f.round=S.round;f.test=predOf(f);return f}
+function fkey(f){
+  switch(f.kind){
+    case'parity':case'range':return f.kind+f.target+'_'+f.pos;
+    case'count':return'count'+f.target+'_'+f.digit;
+    case'cmp':return'cmp'+f.target+'_'+f.p1+f.p2;
+    case'miss':return'miss'+f.target+'_'+f.pos+'_'+f.d;
+    case'eq':return'eq'+f.target+'_'+f.pos;
+    default:return f.kind+f.target;
+  }
+}
+function factText(f){
+  const t=L(P(f.target));
+  switch(f.kind){
+    case'parity':return`${t} ${POSN[f.pos]} = ${f.v==='EVEN'?'偶数':'奇数'}`;
+    case'range':return`${t} ${POSN[f.pos]} = ${f.v==='LOW'?'0〜4':'5〜9'}`;
+    case'count':return`${t} のPWに「${f.digit}」が ${f.n}個`;
+    case'sum':return`${t} のPW合計 = ${f.n}`;
+    case'band':return`${t} のPW合計 ${f.high?'≥ 19':'≤ 18'}`;
+    case'cmp':return`${t} ${POSN[f.p1]} ${f.r} ${POSN[f.p2]}`;
+    case'dup':return`${t} のPWに重複数字 ${f.has?'あり':'なし'}`;
+    case'uniq':return`${t} のPWは ${f.n}種類の数字`;
+    case'miss':return`${t} ${POSN[f.pos]} ≠ ${f.d}`;
+    case'eq':return`${t} ${POSN[f.pos]} = ${f.d}`;
+  }
+  return'';
+}
+function addFact(p,f){
+  if(!f||f.target===p.id)return;
+  const k=fkey(f),i=p.facts.findIndex(x=>fkey(x)===k);
+  if(i>=0){if(p.facts[i].round>f.round)return;p.facts.splice(i,1)}
+  p.facts.push(f);p.fv++;
+}
+function gain(p,cat,text,fact,cls){
+  const e={round:S.round,text,fact:fact||null,cls:cls||(fact?'fact':'sys')};
+  p.feed.push(e);
+  if(fact)addFact(p,fact);
+  if(cat&&p.rr)p.rr[cat].push(e);
+  return e;
+}
+
+/* ======================= 解析ソルバー ======================= */
+const CACHE=new Map();let cacheEpoch=-1;
+function analyze(v,t){
+  if(cacheEpoch!==S.epoch){CACHE.clear();cacheEpoch=S.epoch}
+  const conf=v.conf[t.id];
+  const k=v.id+'|'+t.id+'|'+v.fv+'|'+conf.join()+'|'+t.pw.join('');
+  if(CACHE.has(k))return CACHE.get(k);
+  const fs=v.facts.filter(f=>f.target===t.id&&f.test).sort((a,b)=>a.round-b.round).slice(-30);
+  const fix=conf.map((c,i)=>c?t.pw[i]:-1);
+  let drop=0,list;
+  for(;;){
+    const act=fs.slice(drop);list=[];
+    outer:for(const pw of ALL){
+      for(let i=0;i<4;i++)if(fix[i]>=0&&pw[i]!==fix[i])continue outer;
+      for(const f of act)if(!f.test(pw))continue outer;
+      list.push(pw);
+    }
+    if(list.length||drop>=fs.length)break;
+    drop++;
+  }
+  const per=[0,1,2,3].map(i=>{const c=new Array(10).fill(0);for(const pw of list)c[pw[i]]++;return c});
+  const r={n:list.length,per,conflict:drop>0,stale:new Set(fs.slice(0,drop))};
+  CACHE.set(k,r);return r;
+}
+const possible=(a,pos)=>a.per[pos].map((c,d)=>c>0?d:-1).filter(d=>d>=0);
+const bestDigit=(a,pos)=>{let b=0;a.per[pos].forEach((c,d)=>{if(c>a.per[pos][b])b=d});return b};
+
+/* ======================= 実行フェーズ ======================= */
+function prText(f,pr){
+  return f.map(k=>{
+    if(k==='player'||k==='player2')return L(P(pr[k]));
+    if(k==='pos'||k==='pos2')return POSN[pr[k]];
+    if(k==='digit')return`「${pr[k]}」`;
+  }).join(' / ');
+}
+function actDesc(p){
+  const a=p.act,out=[];
+  if(a.F){
+    const F=a.F;
+    if(F.type==='HACK')out.push(`HACK（${L(P(F.target))}）`);
+    if(F.type==='SHARE')out.push(`SHARE（→ ${F.to.map(i=>P(i).letter).join(', ')}）`);
+  }
+  if(a.A){const c=AC[a.A.id];out.push(`${c.name}${c.f.length?`（${prText(c.f,a.A.pr)}）`:''}`)}
+  if(a.D){const c=DC[a.D.id];const pub=['D06','D10','D20'].includes(a.D.id)?`（${prText(c.f,a.D.pr)}）`:'';out.push(c.name+pub)}
+  return out.join(' + ');
+}
+function tryBlock(t,atk,id,pr,pos){
+  if(!t.fx)return false;
+  t.atk.push({by:atk.id,id,pr});
+  if(t.fx.mirror===atk.id){t.fx.mirrorHits.push(pos===undefined?rnd(4):pos);return true}
+  return false;
+}
+function resolveAttack(p){
+  const {id,pr}=p.act.A,c=AC[id];
+  const others=S.players.filter(t=>t.alive&&t!==p);
+  const rp=others.filter(t=>!(t.fx&&t.fx.stealth));
+  const blocked=(t,pos)=>{if(tryBlock(t,p,id,pr,pos)){gain(p,'ATTACK',`${c.name} → ${L(t)}：防御に遮断された`,null,'warn');return true}return false};
+  const res=f=>gain(p,'ATTACK',`${c.name}：${factText(f)}`,mk(f));
+  const tgt=k=>{const t=P(pr[k]);return t&&t.alive&&t!==p?t:null};
+  const none=()=>gain(p,'ATTACK',`${c.name}：有効な対象がいない`,null,'warn');
+  const randomPairs=kind=>{
+    let pool=[];
+    rp.forEach(t=>[0,1,2,3].forEach(pos=>{if(!p.conf[t.id][pos]&&!p.facts.some(f=>f.kind===kind&&f.target===t.id&&f.pos===pos))pool.push([t,pos])}));
+    if(!pool.length)rp.forEach(t=>[0,1,2,3].forEach(pos=>pool.push([t,pos])));
+    return shuffle(pool).slice(0,2);
+  };
+  switch(id){
+    case'A01':case'A03':{const t=tgt('player');if(!t)return none();if(blocked(t,pr.pos))return;
+      const d=t.pw[pr.pos];res(id==='A01'?{kind:'parity',target:t.id,pos:pr.pos,v:d%2?'ODD':'EVEN'}:{kind:'range',target:t.id,pos:pr.pos,v:d<=4?'LOW':'HIGH'});break}
+    case'A02':case'A04':{const kind=id==='A02'?'parity':'range';const pairs=randomPairs(kind);if(!pairs.length)return none();
+      pairs.forEach(([t,pos])=>{if(blocked(t,pos))return;const d=t.pw[pos];res(kind==='parity'?{kind,target:t.id,pos,v:d%2?'ODD':'EVEN'}:{kind,target:t.id,pos,v:d<=4?'LOW':'HIGH'})});break}
+    case'A05':{const t=tgt('player');if(!t)return none();if(blocked(t))return;res({kind:'count',target:t.id,digit:pr.digit,n:t.pw.filter(d=>d===pr.digit).length});break}
+    case'A07':{const t=tgt('player');if(!t)return none();if(blocked(t))return;res({kind:'sum',target:t.id,n:t.pw.reduce((a,b)=>a+b,0)});break}
+    case'A08':{const ts=shuffle(rp).slice(0,2);if(!ts.length)return none();ts.forEach(t=>{if(blocked(t))return;res({kind:'band',target:t.id,high:t.pw.reduce((a,b)=>a+b,0)>=19})});break}
+    case'A09':{const t=tgt('player');if(!t||pr.pos===pr.pos2)return none();if(blocked(t,pr.pos))return;
+      const p1=Math.min(pr.pos,pr.pos2),p2=Math.max(pr.pos,pr.pos2);res({kind:'cmp',target:t.id,p1,p2,r:cmpSym(t.pw[p1],t.pw[p2])});break}
+    case'A10':{const t1=tgt('player'),t2=tgt('player2');if(!t1||!t2||t1===t2)return none();if(blocked(t1,pr.pos)||blocked(t2,pr.pos2))return;
+      gain(p,'ATTACK',`${c.name}：${L(t1)} ${POSN[pr.pos]} ${cmpSym(t1.pw[pr.pos],t2.pw[pr.pos2])} ${L(t2)} ${POSN[pr.pos2]}`,null,'fact');break}
+    case'A11':{const t=tgt('player');if(!t)return none();if(blocked(t))return;res({kind:'dup',target:t.id,has:new Set(t.pw).size<4});break}
+    case'A13':{const n=others.filter(t=>t.pw[pr.pos]===pr.digit).length;gain(p,'ATTACK',`${c.name}：${POSN[pr.pos]}が「${pr.digit}」のプレイヤーは ${n}人（全${others.length}人中）`,null,'fact');break}
+  }
+}
+function resolveHack(p){
+  const F=p.act.F;
+  const t=P(F.target);
+  if(!t.alive){gain(p,'FIXED',`HACK → ${L(t)}：対象は既にクラック済み`,null,'warn');return}
+  const gs=F.guesses.filter(g=>!p.conf[t.id][g.pos]);
+  t.hk.push({by:p.id,pos:gs.map(g=>g.pos)});
+  gs.forEach(g=>{
+    if(t.pw[g.pos]===g.d){p.conf[t.id][g.pos]=true;gain(p,'FIXED',`HACK成功 → ${L(t)} ${POSN[g.pos]} = ${g.d}  [CONFIRMED]`,null,'conf')}
+    else gain(p,'FIXED',`HACK失敗 → ${L(t)} ${POSN[g.pos]} ≠ ${g.d}`,mk({kind:'miss',target:t.id,pos:g.pos,d:g.d}),'warn');
+  });
+  const miss=gs.filter(g=>t.pw[g.pos]!==g.d);
+  if(miss.length&&p.fx.eraser)gain(p,'DEFENSE',`Log Eraser：${L(t)} へのHACK失敗の通知を消去した`,null,'sys');
+  else if(miss.length){
+    t.suspect=p.id;t.alarm=S.round;
+    gain(t,null,`不正アクセス検知：${L(p)} があなたへのHACKに失敗した（${miss.map(g=>POSN[g.pos]).join('・')}）`,null,'crack');
+    gain(p,'FIXED',`HACK失敗により、${L(t)} にあなたの不正アクセスが検知された`,null,'warn');
+  }
+}
+function crackCompany(c,p){
+  if(S.co[c].cracked||p.role===c)return;
+  S.co[c].cracked=true;
+  S.sys.push({round:S.round,text:`${c}社の企業PWがクラックされ、${c}社が陥落した（社PW ${S.co[c].pw.join('')}）`,cls:'crack'});
+  gain(p,null,`${c}社の企業PWをクラックした`,null,'crack');
+}
+function crack(p,t){
+  if(t.alive){t.alive=false;S.sys.push({round:S.round,text:`${L(t)} がクラックされた`,cls:'crack'})}
+  if(p.roleKnown[t.id])return;
+  p.roleKnown[t.id]=t.role;
+  gain(p,null,`CRACK完了 → ${L(t)} の正体：${ROLE[t.role].name}`,null,'crack');
+  if(t.role==='A'||t.role==='B'){
+    const c=t.role,unk=[0,1,2,3].filter(i=>!(i in p.coConf[c]));
+    shuffle(unk).slice(0,2).forEach(i=>p.coConf[c][i]=S.co[c].pw[i]);
+    gain(p,null,`${c}社PW 断片取得：${coStr(p,c)}`,null,'conf');
+    if(Object.keys(p.coConf[c]).length===4)crackCompany(c,p);
+  }
+}
+const coStr=(p,c)=>[0,1,2,3].map(i=>i in p.coConf[c]?p.coConf[c][i]:'?').join(' ');
+function updateAccess(){
+  S.players.forEach(p=>S.players.forEach(t=>{
+    if(t===p)return;
+    const lv=lvl(p,t),prev=p.lvSeen[t.id]||0;
+    if(lv<=prev)return;
+    p.lvSeen[t.id]=lv;
+    if(prev<1){
+      gain(p,null,`アクセスLv1 → ${L(t)}：行動が見えるようになった`,null,'mon');
+      t.history.filter(h=>h.round<S.round).forEach(h=>gain(p,null,`  過去 R${h.round} ${L(t)}：${h.desc}`,null,'mon'));
+    }
+    if(prev<2&&lv>=2)gain(p,null,`アクセスLv2 → ${L(t)}：MONITOR開始（行動＋結果を毎ラウンド自動取得）`,null,'mon');
+    if(prev<3&&lv>=3){
+      const fs=t.facts.filter(f=>f.target!==p.id);fs.forEach(f=>addFact(p,f));
+      gain(p,null,`アクセスLv3 → ${L(t)}：保有情報${fs.length}件をコピー`,null,'mon');
+    }
+    if(lv>=4)crack(p,t);
+  }));
+}
+function resolveDefense(p){
+  const d=p.act.D,g=(text,f,cls)=>gain(p,'DEFENSE',text,f,cls);
+  const atkers=[...new Set(p.atk.map(a=>a.by))].map(P);
+  switch(d.id){
+    case'D03':g(atkers.length?`Attack Detector：${atkers.map(L).join(', ')} があなたをATTACK`:'Attack Detector：攻撃なし','',atkers.length?'warn':'sys');break;
+    case'D18':g('Information Lock：今ラウンドの監視を遮断');break;
+    case'D19':g('Stealth Mode：ランダムATTACKの抽選から外れた');break;
+    case'D20':{const a=P(d.pr.player);if(!p.fx.mirrorHits.length){g(`Mirror Guard：${L(a)} からの攻撃はなかった`);break}
+      p.fx.mirrorHits.forEach(pos=>{const f=mk({kind:'eq',target:a.id,pos,d:a.pw[pos]});g(`Mirror Guard：${L(a)} の攻撃を防ぎ反射 → ${factText(f)}`,f)});break}
+    case'D21':if(!(p.act.F&&p.act.F.type==='HACK'))g('Log Eraser：HACKを使っていない');break;
+    case'D22':{const ids=[...new Set([...p.atk.map(a=>a.by),...p.hk.map(h=>h.by)])];
+      g(ids.length?`Access Log：${ids.map(i=>{const q=P(i),k=[p.atk.some(a=>a.by===i)&&'ATTACK',p.hk.some(h=>h.by===i)&&'HACK'].filter(Boolean).join('+');return`${L(q)}（${k}）`}).join(', ')} があなたを対象にした`:'Access Log：対象にしたプレイヤーはいない','',ids.length?'warn':'sys');break}
+  }
+}
+function resolveReset(p){
+  const d=p.act.D,old=p.pw.slice();let pw=old.slice();
+  switch(d.id){
+    case'D06':pw[d.pr.pos]=diffDigit(old[d.pr.pos]);break;
+    case'D10':[pw[d.pr.pos],pw[d.pr.pos2]]=[old[d.pr.pos2],old[d.pr.pos]];break;
+    default:return;
+  }
+  p.pw=pw;
+  const ch=[0,1,2,3].filter(i=>pw[i]!==old[i]);
+  gain(p,'DEFENSE',`${DC[d.id].name}：${ch.length?ch.map(i=>POSN[i]).join('・')+'を変更した':'PWは変わらなかった'}`,null,'sys');
+  ch.forEach(i=>S.players.forEach(q=>{if(q!==p&&q.conf[p.id][i])gain(q,null,`追跡：${L(p)} ${POSN[i]} ${old[i]} → ${pw[i]}`,null,'conf')}));
+}
+function resolveShare(p){
+  const cat=p.act.A?'ATTACK':'DEFENSE';
+  const rs=p.act.F.to.map(P).filter(r=>r.alive&&r!==p);
+  const items=p.rr[cat].slice();
+  rs.forEach(r=>items.forEach(e=>gain(r,null,`[SHARE ← ${L(p)}] ${e.text}`,e.fact,'share')));
+  gain(p,'FIXED',`SHARE：${rs.map(L).join(', ')||'—'} に${items.length}件を共有`,null,'share');
+}
+function resolveVisibility(actors){
+  S.players.filter(q=>q.alive).forEach(q=>actors.forEach(t=>{
+    if(t===q)return;
+    const lv=lvl(q,t);
+    const desc=t.history[t.history.length-1].desc;
+    if(lv>=2){
+      if(t.fx.lock){gain(q,null,`MONITOR → ${L(t)}：Information Lockに遮断された`,null,'warn');return}
+      gain(q,null,`MONITOR → ${L(t)}：${desc}`,null,'mon');
+      [...t.rr.FIXED,...t.rr.ATTACK,...t.rr.DEFENSE].forEach(e=>gain(q,null,`  └ ${e.text}`,e.fact,'mon'));
+    }else if(lv>=1)gain(q,null,`TRACE → ${L(t)} の行動：${desc}`,null,'mon');
+  }));
+}
+function execute(){
+  const R=S.round,actors=S.players.filter(p=>p.alive);
+  actors.forEach(p=>{p.rr={ATTACK:[],DEFENSE:[],FIXED:[]};p.fx={lock:false,stealth:false,mirror:null,mirrorHits:[],eraser:false};p.atk=[];p.hk=[];p.history.push({round:R,desc:actDesc(p)})});
+  actors.forEach(p=>{const d=p.act.D;if(!d)return;
+    if(d.id==='D18')p.fx.lock=true;if(d.id==='D19')p.fx.stealth=true;if(d.id==='D20')p.fx.mirror=d.pr.player;if(d.id==='D21')p.fx.eraser=true});
+  shuffle(actors).forEach(p=>{if(p.act.F&&p.act.F.type==='HACK')resolveHack(p)});
+  updateAccess();
+  shuffle(actors).forEach(p=>{if(p.act.A)resolveAttack(p)});
+  actors.forEach(p=>{if(p.act.D)resolveDefense(p)});
+  actors.forEach(p=>{if(p.act.D&&p.alive)resolveReset(p)});
+  actors.forEach(p=>{if(p.act.F&&p.act.F.type==='SHARE')resolveShare(p)});
+  resolveVisibility(actors);
+  actors.forEach(p=>{
+    if(p.act.A){const i=p.handA.indexOf(p.act.A.id);if(i>=0)p.handA.splice(i,1)}
+    if(p.act.D){const i=p.handD.indexOf(p.act.D.id);if(i>=0)p.handD.splice(i,1)}
+  });
+  checkWin();
+  S.epoch++;
+}
+
+/* ======================= 勝敗判定 ======================= */
+function checkWin(){
+  const pl=S.players,blacks=pl.filter(p=>p.role==='BLACK');
+  const blackDown=blacks.every(p=>!p.alive);
+  const fallen=c=>S.co[c].cracked||pl.filter(p=>p.role===c).every(p=>!p.alive);
+  const fa=fallen('A'),fb=fallen('B');
+  let w=null,why='';
+  if(blacks.length&&!blackDown&&fa&&fb){w='BLACK';why='A社・B社がともに陥落した'}
+  else if(blackDown&&fa&&fb){w='DRAW';why='両社が同時に陥落した'}
+  else if(blackDown&&fb){w='A';why=S.co.B.cracked?'B社の企業PWをクラックした':'B社構成員を全員クラックした'}
+  else if(blackDown&&fa){w='B';why=S.co.A.cracked?'A社の企業PWをクラックした':'A社構成員を全員クラックした'}
+  if(!w&&S.round>=S.max){
+    if(blacks.length&&!blackDown){w='BLACK';why='ブラックハッカーが最終ラウンドまで生き残った'}
+    else{
+      const sc=c=>pl.filter(m=>m.role===c).reduce((s,m)=>s+pl.filter(t=>t.role!==c&&t!==m).reduce((a,t)=>a+lvl(m,t),0)+Object.keys(m.coConf[c==='A'?'B':'A']).length,0);
+      const a=sc('A'),b=sc('B');
+      w=a>b?'A':b>a?'B':'DRAW';why=`時間切れ判定（特定桁数 A社 ${a} / B社 ${b}）`;
+    }
+  }
+  if(!w)return;
+  const whites=(w==='A'||w==='B')?pl.filter(p=>p.role==='WHITE'&&p.alive&&pl.filter(m=>m.role===w).every(m=>lvl(m,p)<=1)).map(p=>p.id):[];
+  S.winner={side:w,why,whites};
+  S.sys.push({round:S.round,text:`ゲーム終了：${w==='DRAW'?'引き分け':ROLE[w].name+'陣営の勝利'}`,cls:'crack'});
+}
+function humanWon(){
+  const h=human(),w=S.winner;if(!h||!w)return false;
+  return w.side===h.role||w.whites.includes(h.id);
+}
+
+/* ======================= CPU ======================= */
+function hackPlan(b,t,a){
+  const res=[];
+  for(let pos=0;pos<4;pos++){
+    if(b.conf[t.id][pos])continue;
+    const ps=possible(a,pos);if(!ps.length)continue;
+    res.push({pos,d:bestDigit(a,pos),size:ps.length});
+  }
+  return res.sort((x,y)=>x.size-y.size);
+}
+function botAct(b){
+  const others=S.players.filter(t=>t.alive&&t!==b);
+  const info=others.map(t=>({t,a:analyze(b,t),lv:lvl(b,t)}));
+  const act={A:null,D:null,F:null};
+  if(b.focus===undefined||!P(b.focus).alive||Math.random()<.08){
+    const r=info.slice().sort((x,y)=>(y.lv*2-Math.log10(y.a.n+1))-(x.lv*2-Math.log10(x.a.n+1)));
+    b.focus=r.length?r[rnd(Math.min(2,r.length))].t.id:undefined;
+  }
+  if(b.suspect!==undefined&&P(b.suspect).alive&&b.suspect!==b.id&&Math.random()<.7)b.focus=b.suspect;
+  let best=null,bs=0;
+  info.forEach(x=>{const g=hackPlan(b,x.t,x.a);if(!g.length)return;const s=g.slice(0,2).reduce((s,q)=>s+1/q.size,0)+x.lv*.08+(x.t.id===b.focus?.25:0);if(s>bs){bs=s;best={t:x.t,g}}});
+  if(best&&(bs>=.6||Math.random()<.25+bs)){
+    const sure=best.g.filter(q=>q.size<=(b.role==='BLACK'?2:3));
+    act.F={type:'HACK',target:best.t.id,guesses:(sure.length?sure:best.g.slice(0,1)).map(q=>({pos:q.pos,d:q.d}))};
+  }else{
+    if(others.length>1&&Math.random()<.12)act.F={type:'SHARE',to:shuffle(others).slice(0,1+rnd(2)).map(t=>t.id)};
+  }
+  const focus=info.find(x=>x.t.id===b.focus)||info[0]||null;
+  const hacking=act.F&&act.F.type==='HACK';
+  if(!act.F){act.A=botAttack(b,focus,others);act.D=botDefense(b,others,false)}
+  else if(hacking&&b.handD.includes('D21')&&Math.random()<.6)act.D={id:'D21',pr:{}};
+  else if(Math.random()<.7)act.A=botAttack(b,focus,others);
+  else act.D=botDefense(b,others,hacking);
+  if(act.F&&!act.A&&!act.D)act.D=botDefense(b,others,hacking);
+  return act;
+}
+function botAttack(b,focus,others){
+  if(!focus)return null;
+  let hand=b.handA.slice();if(others.length<2)hand=hand.filter(x=>x!=='A10');
+  if(!hand.length)return null;
+  const id=pick(hand),t=focus.t,a=focus.a;
+  const unc=[0,1,2,3].filter(i=>!b.conf[t.id][i]).sort((x,y)=>possible(a,y).length-possible(a,x).length);
+  const pos=unc.length?unc[0]:rnd(4);
+  const pos2=unc.length>1?unc[1]:(pos+1)%4;
+  const ps=possible(a,pos);
+  const o2=others.filter(x=>x!==t);
+  return{id,pr:{player:t.id,player2:(o2.length?pick(o2):t).id,pos,pos2,digit:ps.length?pick(ps):rnd(10)}};
+}
+function botDefense(b,others,hacking){
+  let hand=b.handD.filter(x=>hacking||x!=='D21');if(!hand.length)hand=b.handD;
+  if(!hand.length)return null;
+  const id=pick(hand),pos=rnd(4);
+  const sus=b.suspect!==undefined&&P(b.suspect).alive&&b.suspect!==b.id?P(b.suspect):null;
+  return{id,pr:{pos,pos2:(pos+1+rnd(3))%4,digit:diffDigit(b.pw[pos]),player:(sus||(others.length?pick(others):b)).id}};
+}
+function botMulligan(b){
+  let n=0;
+  ['handA','handD'].forEach(h=>{for(let i=b[h].length-1;i>=0;i--)if(Math.random()<.18){b[h].splice(i,1);n++}});
+}
+const GENERIC=[
+  b=>`${L(pickOther(b))} の動きが怪しい。`,
+  ()=>'ブラックを先に落とさないと、どこの会社も勝てないぞ。',
+  ()=>'口で言うだけならタダ。SHAREで出してくれ。',
+  b=>`${L(pickOther(b))}、さっきの情報は本当？`,
+  ()=>'誰か自分をHACKしてる気がする。',
+  ()=>'同じ会社の人、SHAREで組まない？',
+  b=>`${L(pickOther(b))} とは組める気がする。`,
+  ()=>'Attack Detectorを出してるから、こっちを狙ったらすぐ分かるよ。',
+  ()=>'今ラウンドは様子見。'
+];
+function pickOther(b){const o=S.players.filter(t=>t.alive&&t!==b);return o.length?pick(o):b}
+function flipFact(f){
+  const g=Object.assign({},f);
+  switch(f.kind){
+    case'parity':g.v=f.v==='EVEN'?'ODD':'EVEN';break;
+    case'range':g.v=f.v==='LOW'?'HIGH':'LOW';break;
+    case'count':g.n=f.n?f.n-1:1;break;
+    case'sum':g.n=Math.max(0,f.n+pick([-3,-2,2,3]));break;
+    case'band':g.high=!f.high;break;
+    case'cmp':g.r=f.r==='<'?'>':'<';break;
+    case'dup':g.has=!f.has;break;
+    case'uniq':g.n=f.n===4?3:f.n+1;break;
+    case'miss':g.d=(f.d+1+rnd(8))%10;break;
+  }
+  return g;
+}
+function botLine(b){
+  const liar=b.role==='BLACK'?.5:b.role==='WHITE'?.25:.12,r=Math.random();
+  if(b.alarm===S.round&&b.suspect!==undefined&&P(b.suspect).alive&&Math.random()<.8)return pick([`${L(P(b.suspect))} から不正アクセスを受けた。こいつは敵だ。`,`警告：${L(P(b.suspect))} が自分をHACKしてきた。`,`${L(P(b.suspect))}、HACK失敗してたよ。バレてるからな。`]);
+  const known=Object.keys(b.roleKnown);
+  if(known.length&&r<.3){
+    const tid=+pick(known),role=b.roleKnown[tid];
+    const claim=Math.random()<liar?pick(Object.keys(ROLE).filter(x=>x!==role)):role;
+    return`${L(P(tid))} を落とした。正体は${ROLE[claim].name}だった。`;
+  }
+  const fs=b.facts.filter(f=>P(f.target).alive&&f.round>=S.round-1&&f.kind!=='miss');
+  if(fs.length&&r<.75){
+    let f=pick(fs);if(Math.random()<liar)f=flipFact(f);
+    return pick(['','情報共有。','確かな情報だ。','信じるかは任せる。'])+factText(f)+pick(['。','だった。','。SHAREでも出せる。']);
+  }
+  return pick(GENERIC)(b);
+}
+const REPLIES=[h=>`${L(h)}、それSHAREで証明できる？`,()=>'了解。',()=>'嘘っぽいな。',()=>'こっちの結果とも一致してる。',h=>`${L(h)} は信用していいのか…？`,()=>'その話、乗った。'];
+
+/* ======================= UI状態 ======================= */
+const UI={sel:{ATTACK:null,DEFENSE:null,FIXED:null},mull:new Set(),tab:'intel',msg:'',open:new Set(),draft:'',timers:[]};
+const CATS=['ATTACK','DEFENSE','FIXED'];
+function othersOf(p){return S.players.filter(t=>t.alive&&t!==p)}
+function hackTargets(h){
+  return othersOf(h).map(t=>({v:'p'+t.id,label:L(t)}));
+}
+function hackDefaults(h,tgt){
+  const pr={tgt,g:[-1,-1,-1,-1]};
+  const t=P(+tgt.slice(1)),a=analyze(h,t),plan=hackPlan(h,t,a);
+  if(plan[0])pr.g[plan[0].pos]=plan[0].d;
+  return pr;
+}
+function pickCard(cat,key){
+  const h=human(),s=UI.sel;UI.msg='';
+  const same=s[cat]&&(cat==='FIXED'?s[cat].type===key:s[cat].idx===key);
+  if(same){s[cat]=null;return}
+  const used=CATS.filter(c=>s[c]&&c!==cat).length;
+  if(!s[cat]&&used>=2){UI.msg='1ラウンドに使えるのは異なる2カテゴリまで。先にどれかを外してください。';return}
+  const o=othersOf(h);
+  const base={player:o[0]?.id,player2:(o[1]||o[0])?.id,pos:0,pos2:1,digit:0};
+  if(cat==='ATTACK')s.ATTACK={idx:key,pr:base};
+  else if(cat==='DEFENSE')s.DEFENSE={idx:key,pr:Object.assign(base,{digit:diffDigit(h.pw[0])})};
+  else{
+    if(key==='HACK'){const ts=hackTargets(h);s.FIXED={type:'HACK',pr:ts.length?hackDefaults(h,ts[0].v):{tgt:'',g:[-1,-1,-1,-1]}}}
+    if(key==='SHARE')s.FIXED={type:'SHARE',pr:{to:new Set()}};
+  }
+  const pf=playerFields(cat);if(pf.length)UI.pf={slot:cat,field:pf[0]};
+  if(posSteps(cat).length)UI.pp={slot:cat,i:0};
+}
+/* ---- TARGETSの桁クリックで「プレイヤー＋桁」指定 ---- */
+function posSteps(slot){
+  const s=UI.sel[slot],h=human();if(!s)return[];
+  if(slot==='FIXED')return s.type==='HACK'?[{hack:true}]:[];
+  const id=slot==='ATTACK'?h.handA[s.idx]:h.handD[s.idx],f=(slot==='ATTACK'?AC:DC)[id].f;
+  if(!f.includes('pos'))return[];
+  const self=slot==='DEFENSE',pl=k=>!self&&f.includes(k)?k:null;
+  const st=[{pl:pl('player'),pos:'pos',self}];
+  if(f.includes('pos2'))st.push({pl:pl('player2')||pl('player'),pos:'pos2',self});
+  return st;
+}
+function activePP(self){
+  if(UI.pp){const st=posSteps(UI.pp.slot)[UI.pp.i];if(st&&!!st.self===self)return UI.pp}
+  for(const c of CATS){const st=posSteps(c);if(st.length&&!!st[0].self===self)return{slot:c,i:0}}
+  return null;
+}
+function ppLabel(pp){
+  const s=UI.sel[pp.slot],st=posSteps(pp.slot),step=st[pp.i];
+  if(step.hack)return'HACK の入力（クリックで 数字 ⇄ *）';
+  const name=(pp.slot==='ATTACK'?AC[human().handA[s.idx]]:DC[human().handD[s.idx]]).name;
+  return`${name} の${step.pl?'対象＋':''}${st.length>1?'桁'+(pp.i+1):'桁'}`;
+}
+function cellMarks(){
+  const m={},h=human();
+  CATS.forEach(c=>{const s=UI.sel[c],st=posSteps(c);st.forEach((step,i)=>{
+    if(step.hack){if(s.pr.tgt&&s.pr.tgt[0]==='p')s.pr.g.forEach((d,p)=>{if(d>=0)m[s.pr.tgt.slice(1)+'_'+p]='HACK '+d});return}
+    const tid=step.self?h.id:step.pl?s.pr[step.pl]:null;
+    if(tid===null||tid===undefined)return;
+    const k=tid+'_'+s.pr[step.pos];m[k]=(m[k]?m[k]+'/':'')+(c==='ATTACK'?'ATK':'DEF')+(st.length>1?i+1:'');
+  })});
+  return m;
+}
+function digitPick(tid,pos){
+  const h=human(),self=tid===h.id,pp=activePP(self);
+  if(!pp){UI.msg=self?'自分の桁を指定するDEFENSEカード（Password Resetなど）を選んでください。':'桁を指定するカード（ATTACK・HACK）を選んでください。';return}
+  UI.msg='';
+  const s=UI.sel[pp.slot],st=posSteps(pp.slot),step=st[pp.i];
+  if(step.hack){
+    if(s.pr.tgt!=='p'+tid)s.pr={tgt:'p'+tid,g:[-1,-1,-1,-1]};
+    if(h.conf[tid][pos]){UI.msg='その桁は既にCONFIRMEDです。';return}
+    s.pr.g[pos]=s.pr.g[pos]>=0?-1:bestDigit(analyze(h,P(tid)),pos);
+    UI.pf={slot:'FIXED',field:'tgt'};
+    return;
+  }
+  if(step.pl)s.pr[step.pl]=tid;
+  s.pr[step.pos]=pos;
+  if(self&&s.pr.digit===h.pw[pos])s.pr.digit=diffDigit(h.pw[pos]);
+  const ni=(pp.i+1)%st.length;UI.pp={slot:pp.slot,i:ni};
+  if(st[ni].pl)UI.pf={slot:pp.slot,field:st[ni].pl};
+}
+/* ---- TARGETSクリックでプレイヤー指定 ---- */
+function playerFields(slot){
+  const s=UI.sel[slot],h=human();if(!s)return[];
+  if(slot==='FIXED')return{HACK:['tgt'],SHARE:['to']}[s.type];
+  const id=slot==='ATTACK'?h.handA[s.idx]:h.handD[s.idx];
+  return(slot==='ATTACK'?AC:DC)[id].f.filter(k=>k.startsWith('player'));
+}
+function activePF(){
+  if(UI.pf&&playerFields(UI.pf.slot).includes(UI.pf.field))return UI.pf;
+  for(const c of CATS){const f=playerFields(c);if(f.length)return{slot:c,field:f[0]}}
+  return null;
+}
+function pfChosen(pf){
+  if(!pf)return[];
+  const pr=UI.sel[pf.slot].pr;
+  if(pf.field==='tgt')return pr.tgt&&pr.tgt[0]==='p'?[+pr.tgt.slice(1)]:[];
+  if(pf.field==='to')return[...pr.to];
+  return[pr[pf.field]];
+}
+function pfCan(pf,t){
+  const h=human();
+  if(!t.alive||t===h)return false;
+  return true;
+}
+function pfLabel(pf){
+  const s=UI.sel[pf.slot];
+  const name=pf.slot==='FIXED'?s.type:(pf.slot==='ATTACK'?AC[human().handA[s.idx]]:DC[human().handD[s.idx]]).name;
+  return`${name} の${pf.field==='player2'?'対象2':pf.field==='to'?'共有相手（複数可）':'対象'}`;
+}
+function targetPick(id){
+  const pf=activePF(),t=P(id);
+  if(!pf){UI.msg='先にプレイヤーを指定するカードを選んでください。';return}
+  if(!pfCan(pf,t)){UI.msg='その相手は選べません。';return}
+  UI.msg='';
+  const s=UI.sel[pf.slot];
+  if(pf.field==='tgt')s.pr=hackDefaults(human(),'p'+id);
+  else if(pf.field==='to'){s.pr.to.has(id)?s.pr.to.delete(id):s.pr.to.add(id)}
+  else{
+    s.pr[pf.field]=id;
+    const fs=playerFields(pf.slot),next=fs[fs.indexOf(pf.field)+1];
+    if(next)UI.pf={slot:pf.slot,field:next};
+  }
+}
+function hackGuesses(h,pr){
+  if(!pr.tgt)return[];
+  const known=pos=>h.conf[+pr.tgt.slice(1)][pos];
+  return pr.g.map((d,pos)=>({pos,d})).filter(x=>x.d>=0&&!known(x.pos));
+}
+function slotError(cat){
+  const h=human(),s=UI.sel[cat];if(!s)return'';
+  if(cat==='FIXED'){
+    if(s.type==='HACK'){
+      if(!s.pr.tgt)return'HACKできる対象がいません';
+      if(!hackGuesses(h,s.pr).length)return'少なくとも1桁に数字を入力してください（すべて * では実行できません）';
+    }
+    if(s.type==='SHARE'&&!s.pr.to.size)return'共有相手を1人以上選んでください';
+    return'';
+  }
+  const id=cat==='ATTACK'?h.handA[s.idx]:h.handD[s.idx],f=(cat==='ATTACK'?AC:DC)[id].f;
+  if(f.includes('pos2')&&s.pr.pos===s.pr.pos2)return'2つの桁は別々に選んでください';
+  if(f.includes('player2')&&s.pr.player===s.pr.player2)return'異なる2人を選んでください';
+  if(f.includes('player')&&(s.pr.player===undefined||!P(s.pr.player).alive))return'対象がいません';
+  return'';
+}
+function canExecute(){
+  const n=CATS.filter(c=>UI.sel[c]).length;
+  return n===2&&CATS.every(c=>!slotError(c));
+}
+function humanAct(){
+  const h=human(),s=UI.sel,act={A:null,D:null,F:null};
+  if(s.ATTACK)act.A={id:h.handA[s.ATTACK.idx],pr:Object.assign({},s.ATTACK.pr)};
+  if(s.DEFENSE)act.D={id:h.handD[s.DEFENSE.idx],pr:Object.assign({},s.DEFENSE.pr)};
+  if(s.FIXED){
+    const F=s.FIXED;
+    if(F.type==='HACK'){
+      act.F={type:'HACK',target:+F.pr.tgt.slice(1),guesses:hackGuesses(h,F.pr)};
+    }
+    if(F.type==='SHARE')act.F={type:'SHARE',to:[...F.pr.to]};
+  }
+  return act;
+}
+
+/* ======================= フロー（ホストが処理。ひとりプレイ＝接続なしのホスト） ======================= */
+function waitInfo(id){
+  const hs=S.players.filter(p=>p.human),al=hs.filter(p=>p.alive),need=al.length?al:hs;
+  let left=0;
+  if(S.phase==='action')left=al.length?al.filter(p=>!S.acts[p.id]).length:hs.filter(p=>!S.ready[p.id]).length;
+  else if(S.phase==='result'||S.phase==='discuss')left=need.filter(p=>!S.ready[p.id]).length;
+  else if(S.phase==='hand')left=al.filter(p=>!S.mulls[p.id]).length;
+  return{left,acted:!!S.acts[id],ready:!!S.ready[id],mulled:!!S.mulls[id]};
+}
+const myWait=()=>NET.mode==='client'?(S.wait||{left:0}):waitInfo(ME);
+const toInt=(x,lo,hi)=>{x=Math.floor(+x);return x>=lo&&x<=hi?x:null};
+function cleanPr(pr){
+  pr=pr||{};const o={};
+  ['player','player2'].forEach(k=>{const v=toInt(pr[k],0,S.n-1);if(v!==null)o[k]=v});
+  ['pos','pos2'].forEach(k=>{const v=toInt(pr[k],0,3);o[k]=v===null?0:v});
+  const d=toInt(pr.digit,0,9);o.digit=d===null?0:d;
+  return o;
+}
+function cleanAct(p,a){
+  a=a||{};const r={A:null,D:null,F:null};
+  if(a.A&&p.handA.includes(a.A.id))r.A={id:a.A.id,pr:cleanPr(a.A.pr)};
+  if(a.D&&p.handD.includes(a.D.id)){r.D={id:a.D.id,pr:cleanPr(a.D.pr)};if(DC[r.D.id].f.includes('player')&&r.D.pr.player===undefined)r.D.pr.player=(othersOf(p)[0]||p).id}
+  if(a.F&&a.F.type==='HACK'){
+    const t=toInt(a.F.target,0,S.n-1),gs=new Map();
+    (Array.isArray(a.F.guesses)?a.F.guesses:[]).forEach(g=>{const pos=toInt(g&&g.pos,0,3),d=toInt(g&&g.d,0,9);if(pos!==null&&d!==null)gs.set(pos,{pos,d})});
+    if(t!==null&&t!==p.id&&P(t).alive&&gs.size)r.F={type:'HACK',target:t,guesses:[...gs.values()]};
+  }
+  if(a.F&&a.F.type==='SHARE'){
+    const to=[...new Set((Array.isArray(a.F.to)?a.F.to:[]).map(x=>toInt(x,0,S.n-1)).filter(x=>x!==null&&x!==p.id))];
+    if(to.length)r.F={type:'SHARE',to};
+  }
+  return cnt([r.A,r.D,r.F])===2?r:botAct(p);
+}
+function cleanMull(p,m){
+  const f=(xs,len)=>[...new Set((Array.isArray(xs)?xs:[]).map(x=>toInt(x,0,len-1)).filter(x=>x!==null))].sort((a,b)=>b-a);
+  return{a:f(m.a,p.handA.length),d:f(m.d,p.handD.length)};
+}
+function botReply(h){
+  if(Math.random()>=.6)return;
+  const b=pick(S.players.filter(p=>p.alive&&!p.human));if(!b)return;
+  const gid=S.gid;
+  UI.timers.push(setTimeout(()=>{if(S.gid!==gid)return;S.chat.push({round:S.round,from:b.id,text:pick(REPLIES)(h)});sync()},900+rnd(900)));
+}
+function hostHandle(id,m){
+  const p=P(id);if(!p||!m||S.phase==='setup')return;
+  if(m.t==='chat'){
+    const t=String(m.text||'').trim().slice(0,200);
+    if(t&&p.alive&&!S.winner){S.chat.push({round:S.round,from:id,text:t});botReply(p)}
+    sync();return;
+  }
+  if(m.ph!==S.phase||m.r!==S.round)return;
+  if(m.t==='act'){if(S.phase==='action'&&p.alive&&!S.acts[id])S.acts[id]=cleanAct(p,m.act)}
+  else if(m.t==='ready')S.ready[id]=true;
+  else if(m.t==='mull'){if(S.phase==='hand'&&p.alive&&!S.mulls[id])S.mulls[id]=cleanMull(p,m)}
+  hostAdvance();sync();
+}
+function hostAdvance(){
+  if(!['action','result','discuss','hand'].includes(S.phase)||waitInfo(-1).left>0)return;
+  if(S.phase==='action')runRound();
+  else if(S.phase==='result'){if(!S.winner)toDiscuss()}
+  else if(S.phase==='discuss')toHand();
+  else if(S.phase==='hand')drawPhase();
+}
+function runRound(){
+  S.players.filter(p=>p.alive).forEach(p=>{p.act=p.human&&S.acts[p.id]?S.acts[p.id]:botAct(p)});
+  execute();
+  S.acts={};S.ready={};S.mulls={};S.phase='result';
+}
+function toDiscuss(){
+  S.phase='discuss';S.ready={};
+  const gid=S.gid,r=S.round;
+  const bots=shuffle(S.players.filter(p=>p.alive&&!p.human)),n=Math.min(bots.length,1+rnd(3));
+  bots.slice(0,n).forEach((b,i)=>UI.timers.push(setTimeout(()=>{if(S.gid!==gid||S.round!==r)return;S.chat.push({round:S.round,from:b.id,text:botLine(b)});sync()},600+i*1100)));
+}
+function toHand(){
+  S.ready={};
+  if(S.players.some(p=>p.human&&p.alive))S.phase='hand';
+  else drawPhase();
+}
+function drawPhase(){
+  S.players.filter(p=>p.alive).forEach(p=>{
+    const m=p.human&&S.mulls[p.id];
+    if(m){m.a.forEach(i=>p.handA.splice(i,1));m.d.forEach(i=>p.handD.splice(i,1))}
+    else if(!p.human)botMulligan(p);
+    refill(p);
+  });
+  S.round++;S.phase='action';S.epoch++;S.acts={};S.ready={};S.mulls={};
+  S.sys.push({round:S.round,text:`ROUND ${S.round} 開始`,cls:'sys'});
+}
+/* 自分の入力をホストへ（ホスト/ひとりプレイなら直接処理） */
+function submit(m){
+  if(m.t!=='chat'){m.ph=S.phase;m.r=S.round}
+  if(NET.mode==='client'){if(NET.host&&NET.host.open)NET.host.send(m)}
+  else hostHandle(ME,m);
+}
+function sendChat(){
+  const t=UI.draft.trim();if(!t||!human())return;
+  UI.draft='';const inp=document.getElementById('chat-in');if(inp)inp.value='';
+  submit({t:'chat',text:t});
+}
+function startGame(){
+  UI.timers.forEach(clearTimeout);UI.timers=[];
+  if(NET.mode==='host'){
+    const cs=NET.conns.filter(c=>c.open);NET.conns=cs;
+    const seats=newGame(Math.max(S.n||6,1+cs.length),false,1+cs.length);
+    P(ME).token='host';
+    cs.forEach((c,i)=>{c.seat=seats[i+1];P(c.seat).token=c.token});
+  }else newGame(S.n||6);
+  S.phase='action';
+  sync();
+}
+
+/* ======================= オンライン（PeerJS / WebRTC・ホスト方式） ======================= */
+const NET={mode:'solo',peer:null,conns:[],host:null,code:'',stage:'',err:'',count:0,hostN:0,pending:''};
+const PEER_PREFIX='zerotrust-v1-';
+const roomCode=()=>Array.from({length:5},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[rnd(32)]).join('');
+function netToken(){
+  try{let t=localStorage.getItem('zt-token');if(!t){t=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem('zt-token',t)}return t}
+  catch(e){return NET.tok||(NET.tok=Math.random().toString(36).slice(2)+Date.now().toString(36))}
+}
+function loadPeer(){
+  if(window.Peer)return Promise.resolve();
+  return new Promise((ok,ng)=>{const el=document.createElement('script');el.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';el.onload=ok;el.onerror=()=>ng(new Error('通信ライブラリ（PeerJS）の読み込みに失敗しました。'));document.head.appendChild(el)});
+}
+/* 各プレイヤーに「本人が見てよい情報」だけを渡す */
+function viewFor(id){
+  const v=P(id),all=!!S.winner||!v.alive;
+  const strip=p=>{const {act,rr,fx,atk,hk,suspect,alarm,focus,token,...q}=p;return q};
+  const players=S.players.map(p=>{
+    if(p.id===id||all){const q=strip(p);q.human=p.id===id;return q}
+    const conf=v.conf[p.id]||[false,false,false,false];
+    return{id:p.id,letter:p.letter,alive:p.alive,human:false,role:v.roleKnown[p.id]||null,pw:p.pw.map((d,i)=>conf[i]?d:null),
+      handA:[],handD:[],facts:[],fv:0,feed:[],conf:{},lvSeen:{},roleKnown:{},coConf:{A:{},B:{}},history:[]};
+  });
+  const co={};['A','B'].forEach(c=>co[c]={cracked:S.co[c].cracked,pw:all||S.co[c].cracked?S.co[c].pw:[null,null,null,null]});
+  return{n:S.n,round:S.round,max:S.max,phase:S.phase,epoch:S.epoch,gid:S.gid,winner:S.winner,sys:S.sys,chat:S.chat,co,players,wait:waitInfo(id)};
+}
+function sync(){
+  if(NET.mode==='host')NET.conns.forEach(c=>{if(c.open&&c.seat!==undefined&&S.players&&P(c.seat))c.send({t:'state',me:c.seat,S:viewFor(c.seat)})});
+  if(typeof document!=='undefined')render();
+}
+function lobbySync(){NET.conns.forEach(c=>{if(c.open)c.send({t:'lobby',count:1+NET.conns.length,n:S.n})})}
+async function hostRoom(){
+  NET.err='';NET.stage='connecting';render();
+  try{await loadPeer()}catch(e){NET.err=e.message;NET.stage='';render();return}
+  const code=roomCode(),peer=new Peer(PEER_PREFIX+code);
+  NET.peer=peer;
+  peer.on('open',()=>{NET.mode='host';NET.code=code;NET.stage='lobby';NET.conns=[];render()});
+  peer.on('connection',c=>{c.on('data',m=>hostRecv(c,m));c.on('close',()=>hostDrop(c));c.on('error',()=>hostDrop(c))});
+  peer.on('disconnected',()=>{try{peer.reconnect()}catch(e){}});
+  peer.on('error',e=>{
+    if(e.type==='unavailable-id'&&NET.mode!=='host'){peer.destroy();hostRoom();return}
+    if(NET.mode!=='host'){NET.err='部屋を作れませんでした（'+e.type+'）';NET.stage='';render()}
+  });
+}
+function hostRecv(c,m){
+  if(!m||typeof m!=='object')return;
+  if(m.t==='hello'){
+    c.token=String(m.token||'').slice(0,64)||Math.random().toString(36).slice(2);
+    if(S.phase!=='setup'){
+      const seat=S.players.find(p=>p.token===c.token);
+      if(!seat){c.send({t:'bye',why:'この部屋は試合中です。次の試合まで待つか、別の部屋に参加してください。'});setTimeout(()=>c.close(),800);return}
+      NET.conns=NET.conns.filter(x=>x.token!==c.token);
+      c.seat=seat.id;seat.human=true;NET.conns.push(c);sync();return;
+    }
+    NET.conns=NET.conns.filter(x=>x.token!==c.token);
+    if(1+NET.conns.length>=10){c.send({t:'bye',why:'部屋が満員です（最大10人）。'});setTimeout(()=>c.close(),800);return}
+    NET.conns.push(c);lobbySync();render();return;
+  }
+  if(c.seat===undefined||!NET.conns.includes(c))return;
+  hostHandle(c.seat,m);
+}
+function hostDrop(c){
+  if(!NET.conns.includes(c))return;
+  NET.conns=NET.conns.filter(x=>x!==c);
+  if(S.phase!=='setup'&&c.seat!==undefined){
+    const p=P(c.seat);
+    if(p&&!NET.conns.some(x=>x.seat===c.seat))p.human=false; // 切断中はCPUが代行（再接続で復帰）
+    hostAdvance();sync();
+  }else{lobbySync();render()}
+}
+async function joinRoom(code){
+  code=String(code||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!code){NET.err='ルームコードを入力してください。';render();return}
+  NET.err='';NET.stage='connecting';NET.pending=code;render();
+  try{await loadPeer()}catch(e){NET.err=e.message;NET.stage='';render();return}
+  const peer=new Peer();NET.peer=peer;
+  const fail=msg=>{if(NET.mode==='client')return;NET.err=msg;NET.stage='';try{peer.destroy()}catch(e){}render()};
+  const to=setTimeout(()=>fail('接続できませんでした。コードを確認するか、別のネットワーク（Wi-Fiなど）で試してください。'),20000);
+  peer.on('open',()=>{
+    const c=peer.connect(PEER_PREFIX+code,{reliable:true,serialization:'json'});
+    NET.host=c;
+    c.on('open',()=>{clearTimeout(to);NET.mode='client';NET.code=code;NET.stage='joined';c.send({t:'hello',token:netToken()});render()});
+    c.on('data',clientRecv);
+    c.on('close',()=>{if(NET.mode==='client'){NET.err=NET.err||'ホストとの接続が切れました。';netReset()}});
+  });
+  peer.on('error',e=>{clearTimeout(to);fail(e.type==='peer-unavailable'?'部屋が見つかりません。コードを確認してください。':'通信エラー（'+e.type+'）')});
+}
+function clientRecv(m){
+  if(!m||typeof m!=='object')return;
+  if(m.t==='lobby'){NET.count=m.count;NET.hostN=m.n;if(S.phase==='setup')render();return}
+  if(m.t==='bye'){NET.err=m.why||'切断されました。';netReset();return}
+  if(m.t==='state'){
+    ME=m.me;S=m.S;
+    S.players.forEach(p=>p.facts.forEach(f=>{f.test=predOf(f)}));
+    cacheEpoch=-1;
+    render();
+  }
+}
+function netReset(){
+  UI.timers.forEach(clearTimeout);UI.timers=[];
+  if(NET.mode==='host')NET.conns.forEach(c=>{try{c.send({t:'bye',why:'ホストが部屋を閉じました。'})}catch(e){}});
+  const peer=NET.peer;setTimeout(()=>{try{peer&&peer.destroy()}catch(e){}},300);
+  Object.assign(NET,{mode:'solo',peer:null,conns:[],host:null,stage:'',count:0});
+  ME=-1;S={phase:'setup',n:S.n||6};render();
+}
+
+/* ======================= 描画 ======================= */
+const $app=()=>document.getElementById('app');
+function stateKey(){
+  const k=S.gid+'|'+S.round+'|'+S.phase;if(k===UI.key)return;
+  const g=UI.key?UI.key.split('|')[0]:'';UI.key=k;
+  UI.sel={ATTACK:null,DEFENSE:null,FIXED:null};UI.msg='';UI.mull=new Set();UI.pf=null;UI.pp=null;
+  if(g!==S.gid){UI.over=false;UI.open=new Set()}
+  if(S.phase==='result')UI.tab='intel';
+  if(typeof window!=='undefined'&&window.scrollTo)window.scrollTo({top:0});
+}
+function render(){
+  if(S.phase==='setup'){$app().innerHTML=setupHTML();return}
+  stateKey();
+  const fid=document.activeElement&&document.activeElement.id;
+  if(S.phase==='over'||(S.winner&&UI.over)){$app().innerHTML=topHTML()+overHTML();return}
+  $app().innerHTML=topHTML()+`<main class="layout"><section class="console">${consoleHTML()}</section><section class="board">${boardHTML()}</section><aside class="logs">${logsHTML()}</aside></main>`;
+  const inp=document.getElementById('chat-in');if(inp)inp.value=UI.draft;
+  if(fid){const el=document.getElementById(fid);if(el&&el!==document.activeElement){el.focus();if(el.id==='chat-in')el.setSelectionRange(el.value.length,el.value.length)}}
+}
+function renderChat(){
+  document.querySelectorAll('.chatlist').forEach(el=>{el.innerHTML=chatItems();el.scrollTop=el.scrollHeight});
+}
+function setupHTML(){
+  const rows=Object.entries(COMP).map(([n,c])=>`<tr class="${+n===S.n?'on':''}"><td>${n}</td>${c.map(x=>`<td>${x||'—'}</td>`).join('')}</tr>`).join('');
+  return`<div class="setup">
+  <div>
+    <div class="lbl">anonymous hacker · deduction · 4–10 players</div>
+    <div class="logo">ZERO<span>/</span>TRUST</div>
+    <p class="tagline">あなたは匿名のハッカー。全員が秘密の4桁パスワードと所属を持つ。人間は嘘をつくが、システムが返す解析結果は嘘をつかない。誰を信じ、誰のPWを破るか。</p>
+    <div class="pwdemo" aria-hidden="true"><b>?</b><b class="c">8</b><b>?</b><b>?</b></div>
+  </div>
+  <div style="display:grid;gap:10px">
+    ${NET.mode==='client'?'':`<div class="lbl">参加人数（${NET.mode==='host'?'人間＋CPU':'あなた＋CPU'}）</div>`}
+    <div class="counts"${NET.mode==='client'?' hidden':''}>${[4,5,6,7,8,9,10].map(n=>`<button data-do="count" data-n="${n}" aria-pressed="${n===S.n}">${n}</button>`).join('')}</div>
+    <div class="tblwrap"><table class="comp"><thead><tr><th>人数</th><th class="ra">A社</th><th class="rb">B社</th><th class="rk">BLACK</th><th class="rw">WHITE</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${NET.mode==='solo'&&NET.stage!=='connecting'?`<div><button class="btn" data-do="start">ひとりで開始（CPU戦） — ${S.n}人</button></div>`:''}
+    ${onlineHTML()}
+  </div>
+  <details class="rules" open><summary>ルール早見表（このプロトタイプの仕様）</summary>
+    <ul>
+      <li><b>1ラウンド＝異なる2カテゴリ</b>：ATTACK＋DEFENSE／FIXED＋ATTACK／FIXED＋DEFENSE。FIXEDは HACK・SHARE から1つ。</li>
+      <li><b>処理順</b>：DEFENSE（防御設置）→ HACK → ATTACK → DEFENSE（結果）→ PW変更 → SHARE → MONITOR。HACKでクラックされた相手へのATTACKは無効。</li>
+      <li><b>ATTACK</b>は解析情報を得る。相手がPWを変えると古くなる（盤面で「矛盾」表示→古い情報から自動で捨てて再計算）。</li>
+      <li><b>HACK</b>は4桁それぞれに 0〜9 か <b>*</b> を入力。当たった桁は<b>CONFIRMED</b>＝PW変更後も新しい値が自動通知される。外れは「≠」情報として残る。</li>
+      <li><b>不正アクセス検知</b>：HACKで1桁でも外すと、された側に「誰がHACKに失敗したか」が通知される。<b>*</b>（ワイルドカード）の桁は特定できないが、失敗にもならず検知されない。</li>
+      <li><b>アクセスLv</b>：1桁＝相手の行動が見える／2桁＝<b>MONITOR（常時）</b>：行動＋結果を毎ラウンド自動取得／3桁＝相手の保有情報を丸ごとコピー／4桁＝<b>クラック</b>（相手は脱落、役職と所属企業PWの2桁を取得）。</li>
+      <li><b>企業PW</b>：企業サーバーへのHACKはない。構成員をクラックすると所属企業PWの断片（2桁）が手に入り、4桁揃えば<b>企業クラック</b>＝その企業は陥落。</li>
+      <li><b>勝利</b>：A社/B社＝ブラックを全員クラックした上で、相手企業の企業PWクラック or 構成員全員クラック。ブラック＝両社陥落 or 最終ラウンド（8＋人数）まで生存。ホワイト＝A/Bどちらかの勝利時に生存し、勝者側の誰にも2桁以上特定されていなければ便乗勝利。</li>
+      <li><b>チャット</b>は自由に嘘をつける。<b>SHARE</b>は枠を消費する代わりに、システム保証の情報を相手に渡せる。</li>
+      <li>手札はATTACK・DEFENSE各5枚。ラウンド終わりに好きな枚数をMULLIGAN（入替）してから5枚まで補充。</li>
+    </ul>
+  </details>
+</div>`;
+}
+function onlineHTML(){
+  if(NET.stage==='connecting')return`<div class="online"><div class="lbl">ONLINE</div><p class="note wait">接続中…</p></div>`;
+  if(NET.mode==='host'){
+    const url=location.href.split('#')[0]+'#room='+NET.code,hn=1+NET.conns.length;
+    return`<div class="online"><div class="lbl">ONLINE · あなたがホスト</div>
+    <div class="room">ROOM<b>${NET.code}</b></div>
+    <p class="note">参加者はタイトル画面でこのコードを入力するか、このURLを開いてください。</p>
+    <input type="text" class="urlbox mono" readonly value="${esc(url)}" onfocus="this.select()">
+    <p>接続中の人間プレイヤー：<b>${hn}人</b>${hn<=S.n?`（残り ${S.n-hn}人はCPU）`:''}</p>
+    ${hn>S.n?`<div class="err">人間プレイヤーが${hn}人います。参加人数を${hn}人以上にしてください。</div>`:''}
+    <div class="actions"><button class="btn" data-do="start"${hn>S.n?' disabled':''}>オンライン対戦開始 — ${S.n}人</button><button class="btn ghost" data-do="quit">部屋を閉じる</button></div></div>`;
+  }
+  if(NET.mode==='client')return`<div class="online"><div class="lbl">ONLINE · 参加中</div>
+    <div class="room">ROOM<b>${NET.code}</b></div>
+    <p class="wait">接続しました。ホストが開始するのを待っています（人間 ${NET.count||'?'}人${NET.hostN?` / 全${NET.hostN}人`:''}）</p>
+    <div class="actions"><button class="btn ghost" data-do="quit">退出</button></div></div>`;
+  return`<div class="online"><div class="lbl">ONLINE 対戦（4〜10人・足りない分はCPU）</div>
+    ${NET.err?`<div class="err">${esc(NET.err)}</div>`:''}
+    <div class="actions"><button class="btn" data-do="host">部屋を作る</button></div>
+    <form class="chatin" data-form="join"><input type="text" id="room-in" placeholder="ルームコード（例：K7Q2M）" autocomplete="off" maxlength="8" value="${esc(NET.pending||'')}"><button class="btn ghost" type="submit">参加</button></form></div>`;
+}
+function topHTML(){
+  const steps=['ACTION','EXECUTE','RESULT','DISCUSSION','HAND','DRAW'];
+  const cur={action:0,result:2,discuss:3,hand:4,over:6}[S.phase];
+  return`<header class="top">
+  <div class="brand">ZERO<span>/</span>TRUST</div>
+  <div class="round">ROUND <b>${Math.min(S.round,S.max)}</b> / ${S.max}</div>${NET.mode!=='solo'?`<span class="lbl">ROOM ${NET.code}</span>`:''}
+  <div class="steps">${steps.map((s,i)=>`<span class="${i===cur?'on':i<cur?'done':''}">${s}</span>`).join('')}</div>
+  <button class="btn ghost" data-do="quit" style="margin-left:auto;padding:6px 12px">タイトルへ</button>
+</header>`;
+}
+function goalText(role){
+  const hasBlack=COMP[S.n][2]>0;
+  const pre=hasBlack?'ブラックハッカーを全員クラックした後、':'';
+  if(role==='A')return pre+'B社の企業PWをクラックするか、B社構成員を全員クラックせよ。';
+  if(role==='B')return pre+'A社の企業PWをクラックするか、A社構成員を全員クラックせよ。';
+  if(role==='BLACK')return`A社・B社の両方を陥落させるか、ROUND ${S.max}まで生き残れ。`;
+  return'A社かB社が勝った時点で生存し、勝者側の誰にも2桁以上特定されていなければ便乗勝利。';
+}
+function myPwCells(h){
+  const pick=S.phase==='action'&&h.alive&&activePP(true),m=pick?cellMarks():{};
+  return h.pw.map((d,i)=>{const mk=m[h.id+'_'+i];
+    return pick?`<b class="dpick${mk?' dsel':''}" data-dpick="${h.id}" data-pos="${i}" tabindex="0" role="button" aria-label="自分の${POSN[i]}"${mk?` data-mark="${mk}"`:''}>${d}</b>`:`<b>${d}</b>`}).join('');
+}
+function meHTML(){
+  const h=human();
+  const frags=['A','B'].filter(c=>Object.keys(h.coConf[c]).length).map(c=>`<span class="cofrag">${c}社PW：${coStr(h,c)}${S.co[c].cracked?'（陥落）':''}</span>`).join(' ');
+  return`<div class="pane me">
+  <div class="row"><span class="who">${L(h)}</span><span class="badge ${ROLE[h.role].cls}">${ROLE[h.role].name}</span>${h.alive?'':'<span class="badge rk">CRACKED</span>'}</div>
+  <div class="row"><span class="lbl">あなたのPW</span><div class="mypw">${myPwCells(h)}</div>${S.phase==='action'&&h.alive&&activePP(true)?`<span class="pftip">桁クリック → <b>${esc(ppLabel(activePP(true)))}</b></span>`:''}</div>
+  <div class="goal">${goalText(h.role)}</div>
+  ${frags?`<div class="row">${frags}</div>`:''}
+</div>`;
+}
+function consoleHTML(){
+  const h=human();
+  let body='';
+  const w=myWait(),wn=w.left?`<span class="note wait">他のプレイヤーを待っています（あと${w.left}人）</span>`:'';
+  if(!h.alive&&S.phase==='action'){
+    body=`<div class="pane"><h2>観戦モード</h2><p class="note">あなたはクラックされました。盤面には全員の正体とPWが表示されます。</p><div class="actions">${w.ready?wn:'<button class="btn" data-do="run">ラウンドを実行</button>'}</div></div>`;
+  }
+  else if(S.phase==='action'&&w.acted)body=`<div class="pane"><h2>ACTION 送信済み</h2><p class="note">行動を確定しました。</p><div class="actions">${wn}</div></div>`;
+  else if(S.phase==='action')body=actionHTML();
+  else if(S.phase==='hand'&&!h.alive)body=`<div class="pane"><h2>観戦中</h2><div class="actions">${wn}</div></div>`;
+  else if(S.phase==='hand'&&w.mulled)body=`<div class="pane"><h2>HAND 確定済み</h2><div class="actions">${wn}</div></div>`;
+  else if(S.phase==='result')body=resultHTML();
+  else if(S.phase==='discuss')body=discussHTML();
+  else if(S.phase==='hand')body=handHTML();
+  return meHTML()+body;
+}
+function cardBtn(cat,idx,id,sel,extra){
+  const d=cat==='ATTACK'?AC[id]:cat==='DEFENSE'?DC[id]:FX[id];
+  const cls=cat==='ATTACK'?'atk':cat==='DEFENSE'?'def':'fix';
+  return`<button class="card ${cls} ${extra||''}" data-do="pick" data-cat="${cat}" data-key="${idx}" aria-pressed="${!!sel}"${extra==='off'?' disabled':''}>
+    <span class="cid">${cat==='FIXED'?'FIXED':id}</span><span class="cn">${d.name}</span><span class="cd">${d.desc}</span></button>`;
+}
+function sel(slot,field,opts,val){
+  const pf=S.phase==='action'?activePF():null,on=pf&&pf.slot===slot&&pf.field===field;
+  return`<select id="f-${slot}-${field}" data-slot="${slot}" data-field="${field}"${on?' class="pfon"':''}>${opts.map(o=>`<option value="${o.v}"${String(o.v)===String(val)?' selected':''}>${o.label}</option>`).join('')}</select>`;
+}
+const posOpts=()=>POSN.map((l,i)=>({v:i,label:l}));
+const digOpts=()=>[0,1,2,3,4,5,6,7,8,9].map(d=>({v:d,label:String(d)}));
+function fieldsHTML(slot,f,pr){
+  const h=human(),po=othersOf(h).map(t=>({v:t.id,label:L(t)}));
+  const lab={player:'対象',player2:'対象2',pos:'桁',pos2:'桁2',digit:'数字'};
+  return f.map(k=>`<label>${lab[k]} ${sel(slot,k,k.startsWith('player')?po:k.startsWith('pos')?posOpts():digOpts(),pr[k])}</label>`).join('');
+}
+function hackFields(){
+  const h=human(),s=UI.sel.FIXED,pr=s.pr,ts=hackTargets(h);
+  if(!ts.length)return'<span class="err">対象がいません</span>';
+  const t=P(+pr.tgt.slice(1)),conf=h.conf[t.id],a=analyze(h,t);
+  const hint=pos=>{const ps=possible(a,pos);return ps.length<10?`候補 ${ps.join(',')}`:'候補 0-9'};
+  const known=pos=>t.pw[pos];
+  const opts=[{v:-1,label:'*'},...digOpts()];
+  const cells=[0,1,2,3].map(i=>conf[i]
+    ?`<div class="hk ok"><span class="lbl">${POSN[i]}</span><b class="mono">${known(i)}</b><span class="hint">CONFIRMED</span></div>`
+    :`<div class="hk${pr.g[i]>=0?' on':''}"><span class="lbl">${POSN[i]}</span>${sel('FIXED','g'+i,opts,pr.g[i])}<span class="hint">${hint(i)}</span></div>`).join('');
+  const n=hackGuesses(h,pr).length;
+  return`<label>対象 ${sel('FIXED','tgt',ts,pr.tgt)}</label></div><div class="hkrow">${cells}</div><div class="fields"><span class="note">* はスキップ（特定されないが検知もされない）。数字を入れた ${n}桁のうち1つでも外すと、相手にあなたの正体が通知されます。</span>`;
+}
+function slotHTML(cat){
+  const h=human(),s=UI.sel[cat];
+  const title={ATTACK:'ATTACK',DEFENSE:'DEFENSE',FIXED:'FIXED'}[cat];
+  if(!s)return`<div class="slot"><div class="sh"><span class="lbl">${title}</span><span class="note">未選択</span></div></div>`;
+  let name,fields='';
+  if(cat==='FIXED'){
+    name=s.type;
+    if(s.type==='HACK')fields=hackFields();
+    if(s.type==='SHARE'){fields=othersOf(h).map(t=>`<label class="chk"><input type="checkbox" data-share="${t.id}"${s.pr.to.has(t.id)?' checked':''}> ${t.letter}</label>`).join('')+`<span class="note">もう一方のアクション結果を共有</span>`}
+  }else{
+    const id=cat==='ATTACK'?h.handA[s.idx]:h.handD[s.idx],c=(cat==='ATTACK'?AC:DC)[id];
+    name=c.name;fields=fieldsHTML(cat,c.f,s.pr)||'<span class="note">パラメータなし</span>';
+  }
+  const err=slotError(cat);
+  const act=(UI.pp&&UI.pp.slot===cat&&posSteps(cat).length)||(UI.pf&&UI.pf.slot===cat&&playerFields(cat).length);
+  return`<div class="slot filled${act?' active':''}" data-slotbox="${cat}"><div class="sh"><span class="lbl">${title}</span><span class="sn">${name}</span></div><div class="fields">${fields}</div>${err?`<div class="err">${err}</div>`:''}</div>`;
+}
+function actionHTML(){
+  const h=human(),s=UI.sel;
+  const fixedOk={HACK:hackTargets(h).length>0,SHARE:othersOf(h).length>0};
+  const combo=CATS.filter(c=>s[c]).join(' + ')||'—';
+  return`<div class="pane">
+  <h2>ACTION SELECT <span class="lbl">${combo}</span></h2>
+  <div class="hand"><span class="lbl">ATTACK 手札</span><div class="cards">${h.handA.map((id,i)=>cardBtn('ATTACK',i,id,s.ATTACK&&s.ATTACK.idx===i)).join('')}</div></div>
+  <div class="hand"><span class="lbl">DEFENSE 手札</span><div class="cards">${h.handD.map((id,i)=>cardBtn('DEFENSE',i,id,s.DEFENSE&&s.DEFENSE.idx===i)).join('')}</div></div>
+  <div class="hand"><span class="lbl">FIXED（常時使用可）</span><div class="cards">${['HACK','SHARE'].map(k=>cardBtn('FIXED',k,k,s.FIXED&&s.FIXED.type===k,fixedOk[k]?'':'off')).join('')}</div></div>
+  ${UI.msg?`<div class="err">${UI.msg}</div>`:''}
+  <div class="slots">${CATS.filter(c=>s[c]).map(slotHTML).join('')||'<p class="note">異なる2カテゴリからカードを選んでください。</p>'}</div>
+  <div class="actions"><button class="btn" data-do="run"${canExecute()?'':' disabled'}>EXECUTE — 行動を確定</button><span class="note">全員が同時に行動します</span></div>
+</div>`;
+}
+function resultHTML(){
+  const h=human(),mine=h.feed.filter(e=>e.round===S.round),sys=S.sys.filter(e=>e.round===S.round);
+  const over=S.winner;
+  return`<div class="pane">
+  <h2>RESULT — ROUND ${S.round}</h2>
+  <div class="res">${mine.length?mine.map(e=>`<div class="e-${e.cls} flash">${esc(e.text)}</div>`).join(''):'<div class="e-sys">取得した情報はありません</div>'}</div>
+  ${sys.length?`<div class="res" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px"><span class="lbl">システム通知</span>${sys.map(e=>`<div class="e-${e.cls}">${esc(e.text)}</div>`).join('')}</div>`:''}
+  <div class="actions" style="margin-top:14px">${over?`<button class="btn" data-do="over">最終結果を見る</button>`:myWait().ready?`<span class="note wait">他のプレイヤーを待っています（あと${myWait().left}人）</span>`:`<button class="btn" data-do="discuss">DISCUSSION へ</button>`}</div>
+</div>`;
+}
+function discussHTML(){
+  const h=human();
+  return`<div class="pane chatbig">
+  <h2>DISCUSSION <span class="lbl">匿名チャット · 嘘OK</span></h2>
+  <div class="feed chat chatlist">${chatItems()}</div>
+  ${h.alive?`<form class="chatin" data-form="chat"><input type="text" id="chat-in" placeholder="${L(h)} として発言…" autocomplete="off"><button class="btn" type="submit">送信</button></form>`:''}
+  <div class="actions" style="margin-top:12px">${myWait().ready?`<span class="note wait">他のプレイヤーを待っています（あと${myWait().left}人）</span>`:`<button class="btn" data-do="hand">${h.alive?'手札管理へ':'次のラウンドへ'}</button>`}</div>
+</div>`;
+}
+function handHTML(){
+  const h=human(),n=UI.mull.size;
+  const c=(cat,hand,pre)=>hand.map((id,i)=>{const k=pre+':'+i,m=UI.mull.has(k),d=(cat==='ATTACK'?AC:DC)[id];
+    return`<button class="card ${cat==='ATTACK'?'atk':'def'} ${m?'mull':''}" data-do="mull" data-k="${k}" aria-pressed="${m}">${m?'<span class="tagm">MULLIGAN</span>':''}<span class="cid">${id}</span><span class="cn">${d.name}</span><span class="cd">${d.desc}</span></button>`}).join('');
+  return`<div class="pane">
+  <h2>HAND MANAGEMENT <span class="lbl">MULLIGAN ${n}枚</span></h2>
+  <p class="note">残すカードはそのまま（KEEP）。入れ替えたいカードを好きな枚数だけタップ。その後、両手札を5枚まで補充します。</p>
+  <div class="hand"><span class="lbl">ATTACK</span><div class="cards">${c('ATTACK',h.handA,'A')}</div></div>
+  <div class="hand"><span class="lbl">DEFENSE</span><div class="cards">${c('DEFENSE',h.handD,'D')}</div></div>
+  <div class="actions"><button class="btn" data-do="draw">確定してドロー → ROUND ${S.round+1}</button></div>
+</div>`;
+}
+function boardHTML(){
+  const h=human(),god=!h.alive;
+  const pf=S.phase==='action'&&h.alive?activePF():null,chosen=pfChosen(pf);
+  const pp=S.phase==='action'&&h.alive?activePP(false):null,marks=pp?cellMarks():{};
+  const cards=S.players.filter(t=>t!==h).map(t=>{
+    const can=pf&&pfCan(pf,t),isSel=chosen.includes(t.id);
+    const dpk=pp&&t.alive,cell=(i,inner,cls)=>{const mk=marks[t.id+'_'+i];
+      return dpk?`<div class="dg ${cls} dpick${mk?' dsel':''}" data-dpick="${t.id}" data-pos="${i}" tabindex="0" role="button" aria-label="${L(t)} ${POSN[i]}"${mk?` data-mark="${mk}"`:''}>${inner}</div>`:`<div class="dg ${cls}">${inner}</div>`};
+    const lv=lvl(h,t),a=analyze(h,t),role=god?t.role:h.roleKnown[t.id];
+    const cells=[0,1,2,3].map(i=>{
+      if(god)return`<div class="dg${h.conf[t.id][i]?' c':''}"><span class="q" style="color:inherit">${t.pw[i]}</span></div>`;
+      if(h.conf[t.id][i])return cell(i,t.pw[i],'c');
+      const ps=possible(a,i);
+      return cell(i,`${ps.length>=10?'<span class="q">?</span>':`<span class="cand">${ps.join(' ')}</span>`}<span class="n">${ps.length}候補</span>`,'');
+    }).join('');
+    const facts=h.facts.filter(f=>f.target===t.id).sort((x,y)=>y.round-x.round);
+    const open=UI.open.has(t.id);
+    return`<div class="pc${t.alive?'':' dead'}${can?' pickable':''}${isSel?' chosen':''}"${can?` data-tpick="${t.id}" tabindex="0" role="button" aria-pressed="${isSel}"`:''}>
+      <div class="ph"><span class="pn">${L(t)}</span>${isSel?'<span class="selmark">選択中</span>':''}<span class="lv l${lv}">Lv${lv}</span>${role?`<span class="badge ${ROLE[role].cls}">${ROLE[role].tag}</span>`:''}${t.alive?'':'<span class="badge rk">CRACKED</span>'}</div>
+      <div class="digits">${cells}</div>
+      <div class="meta"><span>特定 ${lv}/4</span><span>残り候補 ${a.n.toLocaleString()}</span>${a.conflict?'<span class="conflict">矛盾あり：PW変更の可能性。古い情報を除外中</span>':''}</div>
+      ${facts.length?`<details data-pid="${t.id}"${open?' open':''}><summary>解析情報 ${facts.length}件</summary><ul>${facts.map(f=>`<li class="${a.stale.has(f)?'stale':''}">R${f.round} ${esc(factText(f))}${a.stale.has(f)?'（除外中）':''}</li>`).join('')}</ul></details>`:''}
+    </div>`;
+  }).join('');
+  const tip=(pf?`<p class="pftip">カードクリック → <b>${esc(pfLabel(pf))}</b></p>`:'')+(pp?`<p class="pftip">桁クリック → <b>${esc(ppLabel(pp))}</b></p>`:'');
+  return`<div class="pane"><h2>TARGETS <span class="lbl">${god?'全公開':'あなたの解析状況'}</span></h2>${tip}<div class="plist">${cards}</div></div>`;
+}
+function chatItems(){
+  const h=human();
+  if(!S.chat.length)return'<div class="e-sys">まだ発言はありません</div>';
+  return S.chat.map(m=>`<div class="m${h&&m.from===h.id?' me':''}"><b>R${m.round} ${P(m.from).letter}</b><span>${esc(m.text)}</span></div>`).join('');
+}
+function logsHTML(){
+  const h=human(),tab=UI.tab;
+  let body='';
+  if(tab==='intel'){
+    const byR={};h.feed.forEach(e=>(byR[e.round]=byR[e.round]||[]).push(e));
+    body=Object.keys(byR).sort((a,b)=>b-a).map(r=>`<div class="rh">ROUND ${r}</div>`+byR[r].map(e=>`<div class="e-${e.cls}">${esc(e.text)}</div>`).join('')).join('')||'<div class="e-sys">まだ情報はありません</div>';
+    body=`<div class="feed">${body}</div>`;
+  }else if(tab==='chat')body=`<div class="feed chat chatlist">${chatItems()}</div>`;
+  else body=`<div class="feed">${S.sys.slice().reverse().map(e=>`<div class="e-${e.cls}">R${e.round} ${esc(e.text)}</div>`).join('')}</div>`;
+  const t=(k,l)=>`<button role="tab" aria-selected="${tab===k}" data-do="tab" data-tab="${k}">${l}</button>`;
+  return`<div class="pane"><div class="tabs" role="tablist">${t('intel','INTEL')}${t('chat','CHAT')}${t('sys','SYSTEM')}</div>${body}</div>`;
+}
+function overHTML(){
+  const w=S.winner,h=human(),won=humanWon();
+  const title=w.side==='DRAW'?'DRAW':ROLE[w.side].name+'陣営の勝利';
+  const rows=S.players.map(p=>{
+    const win=p.role===w.side||w.whites.includes(p.id);
+    return`<tr><td class="mono"><b>${L(p)}</b>${p.id===ME?' （あなた）':''}</td><td><span class="badge ${ROLE[p.role].cls}">${ROLE[p.role].name}</span></td><td class="mono">${p.pw.join(' ')}</td><td>${p.alive?'生存':'クラック'}</td><td>${win?'<b style="color:var(--ok)">WIN</b>':''}</td></tr>`}).join('');
+  return`<div style="max-width:880px;margin:0 auto;display:grid;gap:14px">
+  <div class="banner"><span class="lbl">GAME OVER · ROUND ${Math.min(S.round,S.max)}</span><h2>${title}${w.whites.length?' ＋ ホワイトハッカー便乗':''}</h2><div>${esc(w.why)}</div><div style="font-family:var(--f-disp);font-weight:700;color:${won?'var(--ok)':'var(--bad)'}">${h?(won?'あなたの勝利':'あなたの敗北'):''}</div></div>
+  <div class="pane"><h2>全プレイヤー公開</h2><div class="tblwrap"><table class="reveal"><thead><tr><th>プレイヤー</th><th>役職</th><th>最終PW</th><th>状態</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p class="note">A社PW ${S.co.A.pw.join('')}${S.co.A.cracked?'（陥落）':''} / B社PW ${S.co.B.pw.join('')}${S.co.B.cracked?'（陥落）':''}</p></div>
+  <div class="actions">${NET.mode==='client'?'<span class="note wait">ホストが次の試合を始めるのを待っています</span>':`<button class="btn" data-do="again">${NET.mode==='host'?'同じメンバーでもう一度':'同じ人数でもう一度'}</button>`}<button class="btn ghost" data-do="quit">${NET.mode==='solo'?'タイトルへ':'退出'}</button></div>
+</div>`;
+}
+
+/* ======================= イベント ======================= */
+if(typeof document!=='undefined'){
+  document.addEventListener('click',e=>{
+    const dp=e.target.closest('[data-dpick]');
+    if(dp){digitPick(+dp.dataset.dpick,+dp.dataset.pos);render();return}
+    const sb=e.target.closest('[data-slotbox]');
+    if(sb&&!e.target.closest('select,input,label')){const c=sb.dataset.slotbox,pf=playerFields(c);
+      if(posSteps(c).length)UI.pp={slot:c,i:0};if(pf.length)UI.pf={slot:c,field:pf[0]};render();return}
+    const tp=e.target.closest('[data-tpick]');
+    if(tp&&!e.target.closest('details')){targetPick(+tp.dataset.tpick);render();return}
+    const b=e.target.closest('[data-do]');if(!b||b.disabled)return;
+    const d=b.dataset.do;
+    if(d==='count'){S.n=+b.dataset.n;if(NET.mode==='host')lobbySync();render()}
+    else if(d==='start'||d==='again'){if(NET.mode!=='client')startGame()}
+    else if(d==='host')hostRoom();
+    else if(d==='quit'){
+      if(NET.mode==='solo'){UI.timers.forEach(clearTimeout);S={phase:'setup',n:S.n||6};render()}
+      else if(NET.mode==='client'||S.phase==='setup'||confirm('部屋を閉じますか？全員の接続が切れます。'))netReset();
+    }
+    else if(d==='pick'){const cat=b.dataset.cat,k=b.dataset.key;pickCard(cat,cat==='FIXED'?k:+k);render()}
+    else if(d==='run'){
+      if(human().alive){if(!canExecute())return;submit({t:'act',act:humanAct()})}
+      else submit({t:'ready'});
+    }
+    else if(d==='discuss'||d==='hand')submit({t:'ready'});
+    else if(d==='draw'){
+      const ix=c=>[...UI.mull].filter(k=>k[0]===c).map(k=>+k.slice(2));
+      submit({t:'mull',a:ix('A'),d:ix('D')});
+    }
+    else if(d==='over'){UI.over=true;render();window.scrollTo({top:0})}
+    else if(d==='mull'){const k=b.dataset.k;UI.mull.has(k)?UI.mull.delete(k):UI.mull.add(k);render()}
+    else if(d==='tab'){UI.tab=b.dataset.tab;render();if(UI.tab==='chat')renderChat()}
+  });
+  document.addEventListener('change',e=>{
+    const el=e.target;
+    if(el.dataset.share!==undefined){const to=UI.sel.FIXED.pr.to,id=+el.dataset.share;el.checked?to.add(id):to.delete(id);render();return}
+    const slot=el.dataset.slot,field=el.dataset.field;if(!slot)return;
+    const s=UI.sel[slot];if(!s)return;
+    if(field==='tgt'){s.pr=hackDefaults(human(),el.value)}
+    else if(/^g[0-3]$/.test(field))s.pr.g[+field[1]]=+el.value;
+    else s.pr[field]=+el.value;
+    render();
+  });
+  document.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.pid!==undefined){const id=+d.dataset.pid;d.open?UI.open.add(id):UI.open.delete(id)}},true);
+  document.addEventListener('keydown',e=>{
+    const dp=e.target.dataset&&e.target.dataset.dpick!==undefined?e.target:null;
+    if(dp&&(e.key==='Enter'||e.key===' ')){e.preventDefault();const k=`[data-dpick="${dp.dataset.dpick}"][data-pos="${dp.dataset.pos}"]`;digitPick(+dp.dataset.dpick,+dp.dataset.pos);render();const n=document.querySelector(k);if(n)n.focus();return}
+    const tp=e.target.closest&&e.target.closest('[data-tpick]');
+    if(tp&&e.target===tp&&(e.key==='Enter'||e.key===' ')){e.preventDefault();targetPick(+tp.dataset.tpick);render();const n=document.querySelector(`[data-tpick="${tp.dataset.tpick}"]`);if(n)n.focus()}
+  });
+  document.addEventListener('focusin',e=>{
+    const el=e.target;if(!el.dataset||!el.dataset.slot)return;
+    const f=el.dataset.field,pi={pos:0,pos2:1,g0:0,g1:0,g2:0,g3:0}[f];
+    if(pi!==undefined){UI.pp={slot:el.dataset.slot,i:pi};const bd=document.querySelector('.board');if(bd)bd.innerHTML=boardHTML();return}
+    if(!['player','player2','tgt','target'].includes(f))return;
+    if(UI.pf&&UI.pf.slot===el.dataset.slot&&UI.pf.field===f)return;
+    UI.pf={slot:el.dataset.slot,field:f};
+    document.querySelectorAll('select.pfon').forEach(s=>s.classList.remove('pfon'));el.classList.add('pfon');
+    const bd=document.querySelector('.board');if(bd)bd.innerHTML=boardHTML();
+  });
+  document.addEventListener('input',e=>{if(e.target.id==='chat-in')UI.draft=e.target.value});
+  document.addEventListener('submit',e=>{
+    if(e.target.dataset.form==='chat'){e.preventDefault();sendChat()}
+    if(e.target.dataset.form==='join'){e.preventDefault();const el=document.getElementById('room-in');joinRoom(el?el.value:'')}
+  });
+  window.addEventListener('beforeunload',e=>{if(NET.mode==='host'&&S.phase!=='setup'){e.preventDefault();e.returnValue=''}});
+  const hm=location.hash.match(/room=([A-Za-z0-9]+)/);if(hm)NET.pending=hm[1].toUpperCase();
+  render();
+}
+</script>

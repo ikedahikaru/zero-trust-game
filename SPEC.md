@@ -213,6 +213,13 @@
 
 ---
 
+## 10.4 BGM（実装済み）
+
+- `bgm/title.mp3`：タイトル・ロビー・試合終了画面。`bgm/action.mp3`：試合中（ACTION〜HAND）。どちらもループ再生、音量0.45。
+- `render()` のたびに `bgmUpdate()` を呼び、今の画面に合う曲を流す。自動再生の制限があるため、最初の pointerdown / keydown で再生を試みる。
+- 右下の固定ボタン（`#bgm-btn`、`#app` の外に置く）で ON / OFF。設定は localStorage `zt-bgm` に保存する。
+- Suno（有料プラン）で作成。
+
 ## 10.5 オンライン対戦（実装済み）
 
 - 方式：**ホスト方式P2P**。WebRTC（PeerJS 1.5.4 を jsDelivr から、オンライン開始時にだけ読み込む）。シグナリングにはPeerJSの公開サーバーを使う。静的ホスティング（GitHub Pages）だけで動く。
